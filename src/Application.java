@@ -19,7 +19,6 @@ public class Application {
     public static void main(String[] args) throws Exception {
         Application app = new Application();
         app.runApp();
-        System.out.println("hello");
     }
 }
 
