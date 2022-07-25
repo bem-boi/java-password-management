@@ -61,7 +61,7 @@ public final class PasswordGenUtils {
         String password = "";
 
         while (isValidPassword(password) == false) {
-            password = generatePassword(15);
+            password = generatePassword(20);
         }
 
         System.out.println(password);
