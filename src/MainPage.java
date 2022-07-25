@@ -16,12 +16,12 @@ public class MainPage extends Page{
 
         JButton pwGen = new JButton("PASSWORD GENERATOR");
         pwGen.setBounds(170,200,200,100);
-        pwGen.addActionListener(new PageActionListener(this, new PasswordGenerator(800,600), frame));
+        pwGen.addActionListener(new PushInActionListener(this, new PasswordGenerator(800,600), frame));
         panel.add(pwGen);
 
         JButton pwManage = new JButton("PASSWORD MANAGER");
         pwManage.setBounds(420, 200, 200,100);
-        pwManage.addActionListener(new PageActionListener(this, new PasswordManager(800, 600), frame));
+        pwManage.addActionListener(new PushInActionListener(this, new PasswordManager(800, 600), frame));
         panel.add(pwManage);
 
 
