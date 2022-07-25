@@ -11,7 +11,6 @@ public class PopOutActionListener implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
         Template page = Application.backStack.pop();
         page.show();
         this.frame.dispose();
