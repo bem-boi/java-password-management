@@ -1,5 +1,3 @@
-## ignore .class files
-*.class
-
-##ignore all files in bin
+##ignore all files in bin and class
 bin/
+*.class

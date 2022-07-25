@@ -9,9 +9,9 @@ public final class PasswordGenUtils {
     // this checks for the password's conditions
     // https://www.geeksforgeeks.org/how-to-validate-a-password-using-regular-expressions-in-java/ 
 
-    public static Random rand = new Random();
+    private static Random rand = new Random();
 
-    public static char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
+    private static char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
     'n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5',
     '6','7','8','9','!','@','$','%','^','&','#','-','+','='};
     
