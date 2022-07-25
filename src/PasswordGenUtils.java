@@ -29,27 +29,27 @@ public final class PasswordGenUtils {
     // checks for the password's condition
 
     public static boolean isValidPassword(String password){
+       
+        if (password == null){
+            return false;
+        }
+
         String conditions = "^(?=.*[0-9])"
                         + "(?=.*[a-z])(?=.*[A-Z])"
                         + "(?=.*[@#$%^&+-=(),/:;_~<>{}|])" // special characters password need to have
                         + "(?=\\S+$).{8,20}$";
 
-        Pattern p = Pattern.compile(conditions);
+        Pattern patt = Pattern.compile(conditions);
 
+        Matcher match = patt.matcher(password);
 
-        if (password == null){
-            return false;
-        }
-
-        Matcher m = p.matcher(password);
-
-        return m.matches();
+        return match.matches();
     }
 
     // just for check, can remove later
 
     public static void main(String[] args) {
-        String password = "";
+        String password = generatePassword(20);
 
         while (isValidPassword(password) == false) {
             password = generatePassword(20);
