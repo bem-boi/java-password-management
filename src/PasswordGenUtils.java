@@ -38,12 +38,12 @@ public final class PasswordGenUtils {
     // checks for the password's condition
 
     public static boolean isValidPassword(String password){
-        String regex = "^(?=.*[0-9])"
+        String conditions = "^(?=.*[0-9])"
                         + "(?=.*[a-z])(?=.*[A-Z])"
                         + "(?=.*[@#$%^&+=])"
                         + "(?=\\S+$).{8,20}$";
 
-        Pattern p = Pattern.compile(regex);
+        Pattern p = Pattern.compile(conditions);
 
 
         if (password == null){
