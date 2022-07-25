@@ -34,7 +34,6 @@ public abstract class Page extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 Login loginPage = new Login(350,200);
                 loginPage.show();
                 frame.dispose();
@@ -46,7 +45,6 @@ public abstract class Page extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 System.exit(0);
             }
 

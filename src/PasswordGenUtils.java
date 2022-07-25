@@ -1,4 +1,4 @@
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.regex.*;
 
 public final class PasswordGenUtils {
@@ -9,11 +9,7 @@ public final class PasswordGenUtils {
     // this checks for the password's conditions
     // https://www.geeksforgeeks.org/how-to-validate-a-password-using-regular-expressions-in-java/ 
 
-    private static Random rand = new Random();
-
-    private static char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
-    'n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5',
-    '6','7','8','9','!','@','$','%','^','&','#','-','+','='};
+    private static SecureRandom rand = new SecureRandom();
     
     private PasswordGenUtils(){
         throw new AssertionError("Instantiating utility class.");    
@@ -22,43 +18,38 @@ public final class PasswordGenUtils {
     // generates the password
 
     public static String generatePassword(int n){
+        int num = rand.nextInt(33,126); // convert in to ascii
         if(n == 1){
-            int num = rand.nextInt(46);
-            Boolean cap = rand.nextBoolean();
-            if(cap){
-                return Character.toUpperCase(chars[num]) + "";
-            }
-            return chars[num] + "";
+            return (char)num + "";
         }else{
-            int num = rand.nextInt(46);
-            return generatePassword(n-1) + chars[num];
+            return generatePassword(n-1) + (char)num;
         }
     }
 
     // checks for the password's condition
 
     public static boolean isValidPassword(String password){
-        String conditions = "^(?=.*[0-9])"
-                        + "(?=.*[a-z])(?=.*[A-Z])"
-                        + "(?=.*[@#$%^&+=])"
-                        + "(?=\\S+$).{8,20}$";
-
-        Pattern p = Pattern.compile(conditions);
-
-
+       
         if (password == null){
             return false;
         }
 
-        Matcher m = p.matcher(password);
+        String conditions = "^(?=.*[0-9])"
+                        + "(?=.*[a-z])(?=.*[A-Z])"
+                        + "(?=.*[@#$%^&+-=(),/:;_~<>{}|])" // special characters password need to have
+                        + "(?=\\S+$).{8,20}$";
 
-        return m.matches();
+        Pattern patt = Pattern.compile(conditions);
+
+        Matcher match = patt.matcher(password);
+
+        return match.matches();
     }
 
     // just for check, can remove later
 
     public static void main(String[] args) {
-        String password = "";
+        String password = generatePassword(20);
 
         while (isValidPassword(password) == false) {
             password = generatePassword(20);

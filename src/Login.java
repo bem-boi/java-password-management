@@ -52,7 +52,6 @@ public class Login extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 String user = userText.getText();
                 String password = pwText.getText();
                 if(user.equals("Beam") && password.equals("12345")){
@@ -72,7 +71,6 @@ public class Login extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 Register registerPage = new Register(350,200);
                 registerPage.show();
                 frame.dispose();
@@ -84,7 +82,6 @@ public class Login extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 System.exit(0);
             }
 

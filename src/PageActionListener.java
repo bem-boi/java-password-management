@@ -16,7 +16,6 @@ public class PageActionListener implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
         Application.backStack.push(this.currentPage);
         nextPage.show();
         this.frame.dispose();

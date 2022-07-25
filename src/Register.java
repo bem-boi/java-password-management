@@ -40,7 +40,6 @@ public class Register extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 MainPage MainPage = new MainPage(800,600);
                 MainPage.show();
                 frame.dispose();
