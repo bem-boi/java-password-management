@@ -1,2 +1,5 @@
 ## ignore .class files
 *.class
+
+##ignore all files in bin
+bin/
