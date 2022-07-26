@@ -23,8 +23,8 @@ public class Application {
     public static void main(String[] args) throws Exception {
         
         // run GUI app 
-        // Application app = new Application();
-        // app.runApp();
+        Application app = new Application();
+        app.runApp();
 
         
         // password generator
@@ -38,21 +38,21 @@ public class Application {
         // System.out.println(PasswordGenUtils.isValidPassword(password));
 
         // AES 
-        String text = "welcome back my name is beam";
+        // String text = "welcome back my name is beam";
 
-        SecretKey key = AesUtil.generateKey();
-        System.out.println(AesUtil.keyString(key));
+        // SecretKey key = AesUtil.generateKey();
+        // System.out.println(AesUtil.keyString(key));
 
-        Cipher encryptionCipher = AesUtil.encryptCipher(key);
+        // Cipher encryptionCipher = AesUtil.encryptCipher(key);
 
-        String ciphertext = AesUtil.encrypt(encryptionCipher, text);
-        System.out.println(ciphertext);
+        // String ciphertext = AesUtil.encrypt(encryptionCipher, text);
+        // System.out.println(ciphertext);
 
-        String IV = AesUtil.getIV(encryptionCipher);
-        System.out.println(IV);
+        // String IV = AesUtil.getIV(encryptionCipher);
+        // System.out.println(IV);
 
-        String original = AesUtil.decrypt(key, IV, ciphertext);
-        System.out.println(original);
+        // String original = AesUtil.decrypt(key, IV, ciphertext);
+        // System.out.println(original);
     }
 }
 
