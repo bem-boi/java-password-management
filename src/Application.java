@@ -1,8 +1,9 @@
 import java.util.Stack;
 
-import javax.crypto.*;
+import Util.PasswordGenUtils;
 
 import Util.AesUtil;
+import javax.crypto.*;
 
 public class Application {
 
@@ -20,9 +21,23 @@ public class Application {
     }
 
     public static void main(String[] args) throws Exception {
+        
+        // run GUI app 
         // Application app = new Application();
         // app.runApp();
 
+        
+        // password generator
+        // String password = PasswordGenUtils.generatePassword(20);
+
+        // while (PasswordGenUtils.isValidPassword(password) == false) {
+        //     password = PasswordGenUtils.generatePassword(20);
+        // }
+
+        // System.out.println(password);
+        // System.out.println(PasswordGenUtils.isValidPassword(password));
+
+        // AES 
         String text = "welcome back my name is beam";
 
         SecretKey key = AesUtil.generateKey();

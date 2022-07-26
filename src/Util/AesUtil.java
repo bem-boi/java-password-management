@@ -41,7 +41,7 @@ public final class AesUtil{
         return estring;
     }
 
-    // returns the IV with its specific encryption method
+    // returns the IV with respective specific encryption method
     public static String getIV(Cipher encryption){
         byte[] IV = encryption.getIV();
         String IVString = Base64.getEncoder().encodeToString(IV);
