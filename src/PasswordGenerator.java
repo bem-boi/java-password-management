@@ -23,32 +23,6 @@ public class PasswordGenerator extends Page{
 
         back.addActionListener(new PopOutActionListener(frame));
 
-        JLabel passwordtext = new JLabel("");
-        passwordtext.setBounds(420,200,500,50);
-        panel.add(passwordtext);
-
-        JButton generatePW = new JButton("Generate");
-        generatePW.setBounds(420,400,100,50);
-        panel.add(generatePW);
-        generatePW.addActionListener(new ActionListener(){
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean cond = true;
-                String password = "hold";
-                while (cond){
-                    password = PasswordGenUtils.generatePassword(password_length);
-                    if (PasswordGenUtils.isValidPassword(password)){
-                        cond = false;
-                        break;
-                    }
-                }
-                passwordtext.setText(password);
-            }
-
-        });
-        
-
         // Buttons and Labels
 
         JTextField webField = new JTextField(100);
@@ -75,26 +49,37 @@ public class PasswordGenerator extends Page{
         pwlengthLabel.setBounds(70,150,165,25);
         panel.add(pwlengthLabel);
 
+        // password text and generate button
 
+        JLabel passwordtext = new JLabel("");
+        passwordtext.setBounds(420,200,500,50);
+        panel.add(passwordtext);
 
-        JTextPane 
-
-
-
-
-        JButton OK = new JButton("OK");
-        OK.setBounds(255,220,100,25);
-        panel.add(OK);
-        OK.addActionListener(new ActionListener(){
+        JButton generatePW = new JButton("Generate");
+        generatePW.setBounds(420,400,100,50);
+        panel.add(generatePW);
+        generatePW.addActionListener(new ActionListener(){
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                websiteName = webField.getText();
-                email = emailField.getText();
-                password_length = Integer.parseInt(pwLengthField.getText());
+                boolean cond = true;
+                String password = "hold";
+                while (cond){
+                    websiteName = webField.getText();
+                    email = emailField.getText();
+                    password_length = Integer.parseInt(pwLengthField.getText());
+                    password = PasswordGenUtils.generatePassword(password_length);
+                    if (PasswordGenUtils.isValidPassword(password)){
+                        cond = false;
+                        break;
+                    }
+                }
+                passwordtext.setText(password);
             }
 
         });
+
+        // JTextPane 
 
         panel.revalidate();
         panel.repaint();
