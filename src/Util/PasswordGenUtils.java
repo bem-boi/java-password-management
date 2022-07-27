@@ -20,7 +20,7 @@ public final class PasswordGenUtils {
 
     // generates the password
     public static String generatePassword(int n){
-        int num = rand.nextInt(33,126); // convert in to ascii
+        int num = rand.nextInt(126-33) + 33; // convert in to ascii
         if(n == 1){
             return (char)num + "";
         }else{
