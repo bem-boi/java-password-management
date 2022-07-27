@@ -6,7 +6,9 @@ import java.awt.event.*;
 
 public class PasswordGenerator extends Page{
     
-    private static int PASSWORD_LENGTH = 0;
+    private static int password_length = 0;
+    private static String websiteName = "";
+    private static String email = "";
 
     public PasswordGenerator(int w, int h){
         super(w,h);
@@ -35,7 +37,7 @@ public class PasswordGenerator extends Page{
                 boolean cond = true;
                 String password = "hold";
                 while (cond){
-                    password = PasswordGenUtils.generatePassword(PASSWORD_LENGTH);
+                    password = PasswordGenUtils.generatePassword(password_length);
                     if (PasswordGenUtils.isValidPassword(password)){
                         cond = false;
                         break;
@@ -45,20 +47,30 @@ public class PasswordGenerator extends Page{
             }
 
         });
-
-        JTextField pwLength = new JTextField(100);
-        pwLength.setBounds(100,50,165,25);
-        panel.add(pwLength);
         
+        JTextField webField = new JTextField(100);
+        webField.setBounds(120,50,165,25);
+        panel.add(webField);
 
-        JButton pwLengthClick = new JButton("OK");
-        pwLengthClick.setBounds(110,100,100,25);
-        panel.add(pwLengthClick);
-        pwLengthClick.addActionListener(new ActionListener(){
+        JTextField emailField = new JTextField(200);
+        emailField.setBounds(120,100,165,25);
+        panel.add(emailField);
+
+        JTextField pwLengthField = new JTextField(100);
+        pwLengthField.setBounds(120,150,165,25);
+        panel.add(pwLengthField);
+
+
+        JButton OK = new JButton("OK");
+        OK.setBounds(120,220,100,25);
+        panel.add(OK);
+        OK.addActionListener(new ActionListener(){
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                PASSWORD_LENGTH = Integer.parseInt(pwLength.getText());
+                websiteName = webField.getText();
+                email = emailField.getText();
+                password_length = Integer.parseInt(pwLengthField.getText());
             }
 
         });
