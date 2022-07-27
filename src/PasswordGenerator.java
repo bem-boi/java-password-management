@@ -48,21 +48,42 @@ public class PasswordGenerator extends Page{
 
         });
         
+
+        // Buttons and Labels
+
         JTextField webField = new JTextField(100);
-        webField.setBounds(120,50,165,25);
+        webField.setBounds(190,50,165,25);
         panel.add(webField);
 
-        JTextField emailField = new JTextField(200);
-        emailField.setBounds(120,100,165,25);
+        JLabel webLabel = new JLabel("Website Name");
+        webLabel.setBounds(70,50,165,25);
+        panel.add(webLabel);
+
+        JTextField emailField = new JTextField(100);
+        emailField.setBounds(130,100,225,25);
         panel.add(emailField);
 
+        JLabel emailLabel = new JLabel("Email");
+        emailLabel.setBounds(70,100,165,25);
+        panel.add(emailLabel);
+
         JTextField pwLengthField = new JTextField(100);
-        pwLengthField.setBounds(120,150,165,25);
+        pwLengthField.setBounds(190,150,165,25);
         panel.add(pwLengthField);
+
+        JLabel pwlengthLabel = new JLabel("Password Length");
+        pwlengthLabel.setBounds(70,150,165,25);
+        panel.add(pwlengthLabel);
+
+
+
+        JTextPane 
+
+
 
 
         JButton OK = new JButton("OK");
-        OK.setBounds(120,220,100,25);
+        OK.setBounds(255,220,100,25);
         panel.add(OK);
         OK.addActionListener(new ActionListener(){
 
