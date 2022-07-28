@@ -120,6 +120,7 @@ public class PasswordGenerator extends Page{
             public void actionPerformed(ActionEvent e) {
                 // ADD THE PASSWORD, EMAIL, WEBNAME TO DATABASE
                 System.out.println("added to database");
+                System.out.println(password); // check that latest password is added to database
                 webField.setText("");
                 emailField.setText("");
                 pwLengthField.setText("");
