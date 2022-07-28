@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.Image;
 
 public abstract class Page extends Template{
     private JMenuBar mb;
@@ -19,7 +20,13 @@ public abstract class Page extends Template{
         exit = new JMenuItem("Exit");
         about = new JMenuItem("About");
         signOut = new JMenuItem("Sign out");
-        back = new JButton("BACK");
+        
+        Icon icon = new ImageIcon(new ImageIcon("src\\Images\\back-arrow.PNG").getImage().getScaledInstance(17, 17, Image.SCALE_SMOOTH));
+        back = new JButton(icon);
+        back.setOpaque(false);
+        back.setContentAreaFilled(false);
+        back.setBorderPainted(false);
+        back.setFocusPainted(false);
 
         mb.add(back);
         mb.add(file);

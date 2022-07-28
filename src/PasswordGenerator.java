@@ -68,6 +68,7 @@ public class PasswordGenerator extends Page{
         // password text and generate button
         JButton generatePW = new JButton("Generate");
         generatePW.setBounds(255,220,100,50);
+        generatePW.setFocusPainted(false);
         panel.add(generatePW);
         generatePW.addActionListener(new ActionListener(){
 
@@ -111,6 +112,7 @@ public class PasswordGenerator extends Page{
         // button to confirm the textfields and add it to database
         JButton confirm = new JButton("Confirm");
         confirm.setBounds(450,220,100,50);
+        confirm.setFocusPainted(false);
         panel.add(confirm);
         confirm.addActionListener(new ActionListener(){
 
