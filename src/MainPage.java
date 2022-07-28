@@ -16,7 +16,7 @@ public class MainPage extends Page{
 
         JButton pwGen = new JButton("PASSWORD GENERATOR");
         pwGen.setBounds(170,200,200,100);
-        pwGen.addActionListener(new PushInActionListener(this, new PasswordGenerator(800,600), frame));
+        pwGen.addActionListener(new PushInActionListener(this, new PasswordGenerator(800,400), frame));
         panel.add(pwGen);
 
         JButton pwManage = new JButton("PASSWORD MANAGER");

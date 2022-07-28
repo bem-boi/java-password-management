@@ -1,9 +1,13 @@
+import Util.HashUtil;
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.Color;
 
 public class Login extends Template{
     
+    private String test_hashpassword = HashUtil.createHash("12345");
+
     public Login(int w, int h){
         super(w, h);
         this.frame = super.frame;
@@ -54,7 +58,7 @@ public class Login extends Template{
             public void actionPerformed(ActionEvent e) {
                 String user = userText.getText();
                 String password = pwText.getText();
-                if(user.equals("Beam") && password.equals("12345")){
+                if(user.equals("Beam") && HashUtil.checkHash(password, test_hashpassword)){
                     MainPage MainPage = new MainPage(800,600);
                     MainPage.show();
                     frame.dispose();
