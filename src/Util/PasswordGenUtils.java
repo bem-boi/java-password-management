@@ -34,14 +34,25 @@ public final class PasswordGenUtils {
             return false;
         }
 
-        String conditions = "^(?=.*[0-9])"
+        String PasswordConditions = "^(?=.*[0-9])"
                         + "(?=.*[a-z])(?=.*[A-Z])"
                         + "(?=.*[@#$%^&+-=(),/:;_~<>{}|])" // special characters password need to have
                         + "(?=\\S+$).{12,25}$";
 
-        Pattern patt = Pattern.compile(conditions);
-        Matcher match = patt.matcher(password);
-        return match.matches();
+        Pattern patt = Pattern.compile(PasswordConditions);
+        return patt.matcher(password).matches();
+    }
+
+    public static boolean isValidEmail(String email) // https://www.geeksforgeeks.org/check-email-address-valid-not-java/#:~:text=Given%20a%20string%2C%20find%20if,is%20an%20extra%20dot(.)
+    {
+        if (email == null)
+            return false;
+        String EmailCondition = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                            "[a-zA-Z0-9_+&*-]+)*@" +
+                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                            "A-Z]{2,7}$";
+        Pattern patt = Pattern.compile(EmailCondition);
+        return patt.matcher(email).matches();
     }
 
 }

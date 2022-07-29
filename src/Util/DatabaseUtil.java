@@ -1,14 +1,14 @@
 package Util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
-public class DatabaseUtil {
+public final class DatabaseUtil {
     
+    public static Connection connectDB(String url) throws SQLException{
+        Connection con = DriverManager.getConnection(url,"Beam","12345");
+        return con;
+    }
+
     public static boolean firstTime(Connection con){ // check if there's any user in the database
         String sql = "SELECT * FROM users LIMIT 1";
         try (PreparedStatement ps = con.prepareStatement(sql)){
@@ -19,10 +19,6 @@ public class DatabaseUtil {
         }
     }
 
-    public static void registration(){
-        System.out.println("hi");
-    }
-    
     public static void main(String[] args) {
         String url = "jdbc:mysql://127.0.0.1/key_vault";
         try (Connection con = DriverManager.getConnection(url,"Beam","12345")){
@@ -31,7 +27,7 @@ public class DatabaseUtil {
 
             //check if its the first time, so check if theres any username in the table
             if (firstTime(con)){
-                registration();
+                System.out.println("REGISTER"); // send to register page
             }
             String sql = "SELECT id, username FROM users WHERE username = ?"; //"?" is placeholder, WHERE is under what condition
             PreparedStatement ps = con.prepareStatement(sql); //convert sql to be something read to execute

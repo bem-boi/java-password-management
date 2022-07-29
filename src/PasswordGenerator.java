@@ -3,7 +3,7 @@ import Util.PasswordGenUtils;
 import javax.swing.*;
 import javax.swing.text.StyledDocument;
 import java.awt.event.*;
-
+import java.awt.Color;
 
 public class PasswordGenerator extends Page{
     
@@ -52,6 +52,12 @@ public class PasswordGenerator extends Page{
         pwlengthLabel.setBounds(70,150,165,25);
         panel.add(pwlengthLabel);
 
+        // Error message
+        JLabel errorLabel = new JLabel("");
+        errorLabel.setBounds(70,200,165,25);
+        errorLabel.setForeground(Color.RED);
+        panel.add(errorLabel);
+
         // remove all the textfields (another action listener for the back button)
         back.addActionListener(new ActionListener(){
 
@@ -65,54 +71,11 @@ public class PasswordGenerator extends Page{
 
         });
 
-        // password text and generate button
-        JButton generatePW = new JButton("Generate");
-        generatePW.setBounds(255,220,100,50);
-        generatePW.setFocusPainted(false);
-        panel.add(generatePW);
-        generatePW.addActionListener(new ActionListener(){
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Jtextpane appears when I click the generate button
-                textPane.show();
-
-                // reset password text in pane
-                textPane.setText("");
-
-                // generate password
-                boolean cond = true;
-                while (cond){
-                    websiteName = webField.getText();
-                    email = emailField.getText();
-                    password_length = Integer.parseInt(pwLengthField.getText());
-                    password = PasswordGenUtils.generatePassword(password_length);
-                    if (PasswordGenUtils.isValidPassword(password)){
-                        cond = false;
-                        break;
-                    }
-                }
-                
-                textPane.setEditable(false);
-                StyledDocument doc = textPane.getStyledDocument();
-                try{
-                    doc.insertString(doc.getLength(), "Website: " + websiteName + "\n", null);
-                    doc.insertString(doc.getLength(), "Email: " + email + "\n", null );
-                    doc.insertString(doc.getLength(), "Password: " + password + "\n", null );
-                }
-                catch (Exception E){
-                    System.out.println(E);
-                }
-                textPane.setBounds(400,50,300,100);
-                panel.add(textPane);
-            }
-
-        });
-
         // button to confirm the textfields and add it to database
         JButton confirm = new JButton("Confirm");
-        confirm.setBounds(450,220,100,50);
+        confirm.setBounds(450,240,100,50);
         confirm.setFocusPainted(false);
+        confirm.hide();
         panel.add(confirm);
         confirm.addActionListener(new ActionListener(){
 
@@ -124,7 +87,66 @@ public class PasswordGenerator extends Page{
                 webField.setText("");
                 emailField.setText("");
                 pwLengthField.setText("");
+                errorLabel.setText("");
                 textPane.hide();
+                confirm.hide();
+            }
+
+        });
+
+        // password text and generate button
+        JButton generatePW = new JButton("Generate");
+        generatePW.setBounds(255,240,100,50);
+        generatePW.setFocusPainted(false);
+        panel.add(generatePW);
+        generatePW.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Jtextpane appears when I click the generate button
+                textPane.show();
+
+                // reset password text in pane and error message
+                textPane.setText("");
+                errorLabel.setText("");
+
+                // generate password
+                boolean cond = true;
+                websiteName = webField.getText();
+                email = emailField.getText();
+                if (PasswordGenUtils.isValidEmail(email)){
+                    try {
+                        while (cond){
+                            password_length = Integer.parseInt(pwLengthField.getText());
+                            password = PasswordGenUtils.generatePassword(password_length);
+                            if (PasswordGenUtils.isValidPassword(password)){
+                                cond = false;
+                                break;
+                            }
+                        }
+
+                        textPane.setEditable(false);
+                        StyledDocument doc = textPane.getStyledDocument();
+                        try{
+                            doc.insertString(doc.getLength(), "Website: " + websiteName + "\n", null);
+                            doc.insertString(doc.getLength(), "Email: " + email + "\n", null );
+                            doc.insertString(doc.getLength(), "Password: " + password + "\n", null );
+                        }
+                        catch (Exception E){
+                            System.out.println(E);
+                        }
+                        textPane.setBounds(400,50,300,100);
+                        panel.add(textPane);
+
+                        confirm.show();
+                    }catch (NumberFormatException inputError){
+                        textPane.hide();
+                        errorLabel.setText("Put in a number");
+                    }
+                }else{
+                    textPane.hide();
+                    errorLabel.setText("Not a valid email");
+                }
             }
 
         });
