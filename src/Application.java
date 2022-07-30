@@ -1,9 +1,9 @@
 import java.util.Stack;
 
-import Util.PasswordGenUtils;
+// import Util.PasswordGenUtils;
 
-import Util.AesUtil;
-import javax.crypto.*;
+// import Util.AesUtil;
+// import javax.crypto.*;
 
 public class Application {
 
@@ -44,6 +44,9 @@ public class Application {
         // System.out.println(AesUtil.keyString(key));
 
         // Cipher encryptionCipher = AesUtil.encryptCipher(key);
+        
+        // String stringkey = AesUtil.keyString(key);
+        // System.out.println(stringkey);
 
         // String ciphertext = AesUtil.encrypt(encryptionCipher, text);
         // System.out.println(ciphertext);
@@ -51,7 +54,7 @@ public class Application {
         // String IV = AesUtil.getIV(encryptionCipher);
         // System.out.println(IV);
 
-        // String original = AesUtil.decrypt(key, IV, ciphertext);
+        // String original = AesUtil.decrypt(stringkey, IV, ciphertext);
         // System.out.println(original);
     }
 }

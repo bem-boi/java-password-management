@@ -66,7 +66,7 @@ public class PasswordGenerator extends Page{
                 webField.setText("");
                 emailField.setText("");
                 pwLengthField.setText("");
-                textPane.hide();
+                textPane.setVisible(false);
             }
 
         });
@@ -75,7 +75,7 @@ public class PasswordGenerator extends Page{
         JButton confirm = new JButton("Confirm");
         confirm.setBounds(450,240,100,50);
         confirm.setFocusPainted(false);
-        confirm.hide();
+        confirm.setVisible(true);
         panel.add(confirm);
         confirm.addActionListener(new ActionListener(){
 
@@ -88,8 +88,8 @@ public class PasswordGenerator extends Page{
                 emailField.setText("");
                 pwLengthField.setText("");
                 errorLabel.setText("");
-                textPane.hide();
-                confirm.hide();
+                textPane.setVisible(false);
+                confirm.setVisible(false);
             }
 
         });
@@ -104,7 +104,7 @@ public class PasswordGenerator extends Page{
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Jtextpane appears when I click the generate button
-                textPane.show();
+                textPane.setVisible(true);
 
                 // reset password text in pane and error message
                 textPane.setText("");
@@ -138,13 +138,13 @@ public class PasswordGenerator extends Page{
                         textPane.setBounds(400,50,300,100);
                         panel.add(textPane);
 
-                        confirm.show();
+                        confirm.setVisible(true);
                     }catch (NumberFormatException inputError){
-                        textPane.hide();
+                        textPane.setVisible(false);
                         errorLabel.setText("Put in a number");
                     }
                 }else{
-                    textPane.hide();
+                    textPane.setVisible(false);
                     errorLabel.setText("Not a valid email");
                 }
             }

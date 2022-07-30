@@ -49,13 +49,15 @@ public final class AesUtil{
     }
 
     // decrypts the cipher text with its IV and its secret key
-    public static String decrypt(SecretKey key, String IV, String ciphertext) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
+    public static String decrypt(String key, String IV, String ciphertext) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
         byte[] IVByte = Base64.getDecoder().decode(IV);
         byte[] CipherTextByte = Base64.getDecoder().decode(ciphertext);
+        byte[] decodedKey = Base64.getDecoder().decode(key);
+        SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
 
         Cipher decryption = Cipher.getInstance("AES/GCM/NoPadding");
         GCMParameterSpec spec = new GCMParameterSpec(128,IVByte);
-        decryption.init(Cipher.DECRYPT_MODE,key,spec); //everytime I decrypt, i use the IV from that specific encryption method. maybe I keep IV in the same database as cipher text too. The user will also use their own respective key to decrypt
+        decryption.init(Cipher.DECRYPT_MODE,originalKey,spec); //everytime I decrypt, i use the IV from that specific encryption method. maybe I keep IV in the same database as cipher text too. The user will also use their own respective key to decrypt
         return new String(decryption.doFinal(CipherTextByte));
     }
 
