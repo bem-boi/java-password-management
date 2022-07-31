@@ -51,6 +51,8 @@ public class PasswordManager extends Page{
         frame.setVisible(true);
     }
 
+    // drop down menu https://www.delftstack.com/howto/java/java-drop-down-menu/#:~:text=Create%20a%20Dropdown%20Menu%20Using%20JComboBox%20in%20Java,-In%20this%20example&text=Below%2C%20we%20first%20create%20the,its%20argument%20in%20the%20constructor.
+
     // Query pane
     protected JComponent queryPane(){ //use group layout here https://stackoverflow.com/questions/20299927/how-do-i-use-grouplayout-properly-to-move-components-panels
         JPanel panel = new JPanel();
