@@ -40,7 +40,8 @@ public class Register extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainPage MainPage = new MainPage(800,600);
+                user = userText.getText();
+                MainPage MainPage = new MainPage(800,600, user);
                 MainPage.show();
                 frame.dispose();
             }

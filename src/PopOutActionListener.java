@@ -1,5 +1,6 @@
 import javax.swing.JFrame;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 public class PopOutActionListener implements ActionListener{
     
@@ -12,8 +13,12 @@ public class PopOutActionListener implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Template page = Application.backStack.pop();
-        page.show();
-        this.frame.dispose();
+        try {
+            page.show();
+            this.frame.dispose();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
     }
 
 }

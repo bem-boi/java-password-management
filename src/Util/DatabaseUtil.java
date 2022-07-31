@@ -43,8 +43,8 @@ public final class DatabaseUtil {
     }
 
     // check later
-    public static void insertPasswordGen(Connection con, String webname, String email, String cipherPW, String IV, String hashPW){
-        String sql = "INSERT INTO password (username, webname, email, cipherPW, IV, hashPW) VALUES('"+webname+"' , '"+email+"' , '"+cipherPW+"', '"+IV+"', '"+hashPW+"')";
+    public static void insertPasswordGen(Connection con, String user, String webname, String email, String cipherPW, String IV, String hashPW){
+        String sql = "INSERT INTO password(user, webname, email, cipherPW, IV, hashPW) VALUES('"+user+"' ,'"+webname+"' , '"+email+"' , '"+cipherPW+"', '"+IV+"', '"+hashPW+"')";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.executeUpdate();
         }catch (SQLException e){
@@ -70,24 +70,24 @@ public final class DatabaseUtil {
         }
     }
 
-    // returns array of values that will be used to give to the user
+    // returns array of values that will be used to give to the user     (ALSO CHECK FOR USER LATER AS WELL)
     public static String[] queryButton(Connection con, String webname){
         String sql = "SELECT * FROM password WHERE webname='"+webname+"'";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ResultSet s = ps.executeQuery();
             s.next();
-            String username = s.getString("username");
+            String user = s.getString("user");
             String email = s.getString("email");
             String cipherPW = s.getString("cipherPW");
             String IV = s.getString("IV");
-            String[] UserEmailPwIV = {username, email, cipherPW, IV};
+            String[] UserEmailPwIV = {user, email, cipherPW, IV};
             return UserEmailPwIV;
         }catch (SQLException e){
             throw new Error("Problem", e);
         }
     }
 
-    // first checks if the password inputed is the same as the hashPW, if it's the same then it executes the delete SQL statement
+    // first checks if the password inputed is the same as the hashPW, if it's the same then it executes the delete SQL statement      (ALSO CHECK FOR USER LATER AS WELL)
     public static void deleteButton(Connection con, String webname, String hashPW){
         String sql = "SELECT * FROM password WHERE webname='"+webname+"'";
         try(PreparedStatement ps = con.prepareStatement(sql)){
@@ -105,7 +105,7 @@ public final class DatabaseUtil {
         }
     }
 
-    // update passwords in database if inputed password is the same as hashPW
+    // update passwords in database if inputed password is the same as hashPW                (ALSO CHECK FOR USER LATER AS WELL)
     public static void changeButton(Connection con, String webname, String hashPW, String newCipherPW, String newIV){
         String sql = "SELECT * FROM password WHERE webname='"+webname+"'";
         try(PreparedStatement ps = con.prepareStatement(sql)){

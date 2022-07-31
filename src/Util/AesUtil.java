@@ -60,5 +60,12 @@ public final class AesUtil{
         decryption.init(Cipher.DECRYPT_MODE,originalKey,spec); //everytime I decrypt, i use the IV from that specific encryption method. maybe I keep IV in the same database as cipher text too. The user will also use their own respective key to decrypt
         return new String(decryption.doFinal(CipherTextByte));
     }
+    
+    // og should be 'Q6R#:}N@?"uijVOF"$.rLfS'
+    // public static void main(String[] args) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException {
+    //     String og = decrypt("tEvF/7WynmXSrqDiaqnOPtDQyBq7BjMytbhz4cnKZQA=", "NB/hrWv5Ko05/hbe", "/PZfmqydw7WTinu6QJRee6Hkq8LvUPOF6FL5E0Xm2+/3UFBpxIyI");
+    //     System.out.println(og);
+    // }
+
 
 }

@@ -1,8 +1,14 @@
 import Util.PasswordGenUtils;
+import Util.AesUtil;
+import Util.DatabaseUtil;
 
+import javax.crypto.*;
 import javax.swing.*;
 import javax.swing.text.StyledDocument;
 import java.awt.event.*;
+import java.security.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.awt.Color;
 
 public class PasswordGenerator extends Page{
@@ -11,19 +17,22 @@ public class PasswordGenerator extends Page{
     private int password_length;
     private String websiteName;
     private String email;
+    private String url = "jdbc:mysql://127.0.0.1/test";
 
     private JTextPane textPane = new JTextPane();
 
-    public PasswordGenerator(int w, int h){
+    public PasswordGenerator(int w, int h, String user){
         super(w,h);
         this.frame = super.frame;
         this.panel = super.panel;
         this.back = super.back;
     }
 
-    public void show(){
+    public void show() throws SQLException{
         frame.setTitle("Password Generator");
         panel.setLayout(null);
+
+        Connection con = DatabaseUtil.connectDB(url);
 
         back.addActionListener(new PopOutActionListener(frame));
         
@@ -77,23 +86,7 @@ public class PasswordGenerator extends Page{
         confirm.setFocusPainted(false);
         confirm.setVisible(true);
         panel.add(confirm);
-        confirm.addActionListener(new ActionListener(){
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // ADD THE PASSWORD, EMAIL, WEBNAME TO DATABASE
-                System.out.println("added to database");
-                System.out.println(password); // check that latest password is added to database
-                webField.setText("");
-                emailField.setText("");
-                pwLengthField.setText("");
-                errorLabel.setText("");
-                textPane.setVisible(false);
-                confirm.setVisible(false);
-            }
-
-        });
-
+        
         // password text and generate button
         JButton generatePW = new JButton("Generate");
         generatePW.setBounds(255,240,100,50);
@@ -149,6 +142,36 @@ public class PasswordGenerator extends Page{
                 }
             }
 
+        });
+
+        confirm.addActionListener(new ActionListener(){
+        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                // ADD THE PASSWORD, EMAIL, WEBNAME TO DATABASE   
+                try{
+                    SecretKey key = AesUtil.generateKey();
+                    String keystring = AesUtil.keyString(key);
+                    Cipher encryption = AesUtil.encryptCipher(key);
+                    String cipherPW = AesUtil.encrypt(encryption, password);
+                    String IV = AesUtil.getIV(encryption);
+                    String hashPW = "$2a$10$PS7VPSbAJNYglI2cT.aUiOJtsyEznDoGrMrM/wp0U9D2w/ATeN522";
+
+                    DatabaseUtil.insertPasswordGen(con, user, websiteName, email, cipherPW, IV, hashPW);
+            
+                    System.out.println(password); // check that latest password is added to database
+                    webField.setText("");
+                    emailField.setText("");
+                    pwLengthField.setText("");
+                    errorLabel.setText("");
+                    textPane.setVisible(false);
+                    confirm.setVisible(false);
+                }catch (NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex){
+                    throw new Error("Wrong");
+                }
+            }
+        
         });
 
         panel.revalidate();

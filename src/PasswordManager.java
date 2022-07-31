@@ -4,7 +4,7 @@ import java.awt.event.*;
 // https://docs.oracle.com/javase/tutorial/uiswing/examples/components/TabbedPaneDemoProject/src/components/TabbedPaneDemo.java
 
 public class PasswordManager extends Page{
-    public PasswordManager(int w, int h){
+    public PasswordManager(int w, int h, String user){
         super(w,h);
         this.frame = super.frame;
         this.panel = super.panel;

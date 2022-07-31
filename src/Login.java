@@ -56,11 +56,11 @@ public class Login extends Template{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String user = userText.getText();
+                user = userText.getText();
                 char[] passwordchar = pwText.getPassword();
                 String password = new String(passwordchar);
                 if(user.equals("Beam") && HashUtil.checkHash(password, test_hashpassword)){
-                    MainPage MainPage = new MainPage(800,600);
+                    MainPage MainPage = new MainPage(800,600, user);
                     MainPage.show();
                     frame.dispose();
                 }else{

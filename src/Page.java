@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.awt.Image;
 
 public abstract class Page extends Template{
@@ -60,5 +61,5 @@ public abstract class Page extends Template{
         frame.setJMenuBar(mb);
     }
 
-    public abstract void show();
+    public abstract void show() throws SQLException;
 }

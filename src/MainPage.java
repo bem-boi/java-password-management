@@ -1,7 +1,7 @@
 import javax.swing.JButton;
 
 public class MainPage extends Page{
-    public MainPage(int w, int h){
+    public MainPage(int w, int h, String user){
         super(w, h);
         this.frame = super.frame;
         this.panel = super.panel;
@@ -17,13 +17,13 @@ public class MainPage extends Page{
         JButton pwGen = new JButton("PASSWORD GENERATOR");
         pwGen.setBounds(170,200,200,100);
         pwGen.setFocusPainted(false);
-        pwGen.addActionListener(new PushInActionListener(this, new PasswordGenerator(800,400), frame));
+        pwGen.addActionListener(new PushInActionListener(this, new PasswordGenerator(800,400, user), frame));
         panel.add(pwGen);
 
         JButton pwManage = new JButton("PASSWORD MANAGER");
         pwManage.setBounds(420, 200, 200,100);
         pwManage.setFocusPainted(false);
-        pwManage.addActionListener(new PushInActionListener(this, new PasswordManager(800, 600), frame));
+        pwManage.addActionListener(new PushInActionListener(this, new PasswordManager(800, 600, user), frame));
         panel.add(pwManage);
 
 

@@ -1,4 +1,6 @@
 import java.awt.event.*;
+import java.sql.SQLException;
+
 import javax.swing.JFrame;
 
 
@@ -17,8 +19,12 @@ public class PushInActionListener implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Application.backStack.push(this.currentPage);
-        nextPage.show();
-        this.frame.dispose();
+        try {
+            nextPage.show();
+            this.frame.dispose();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
     }
 
 }
