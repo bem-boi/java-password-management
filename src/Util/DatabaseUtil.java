@@ -11,7 +11,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public final class DatabaseUtil {
     
@@ -170,9 +170,9 @@ public final class DatabaseUtil {
 
     /* -------------------------------------------CHECK PASSWORD---------------------------------------------- */
 
-    // decrypts the password first and returns a hash table with array inside     ITERATE THROUGH HASHTABLE: https://www.geeksforgeeks.org/how-to-iterate-through-hashtable-in-java/#:~:text=There%20are%20various%20ways%20by,of%20Map%20and%20Iterator%20Interface
-    public static Hashtable<Integer, String[]> checkPW(Connection con, String user) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
-        Hashtable<Integer, String[]> password_dict = new Hashtable<Integer, String[]>();
+    // decrypts the password first and returns a hash table with array inside     
+    public static HashMap<Integer, String[]> checkPW(Connection con, String user) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
+        HashMap<Integer, String[]> password_dict = new HashMap<Integer, String[]>();
         String key = getCipherKey(con, user);
         String sql = "SELECT * FROM password WHERE user='"+user+"'";
         int count = 1;
