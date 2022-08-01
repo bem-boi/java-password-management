@@ -2,14 +2,16 @@ import Util.PasswordGenUtils;
 import Util.AesUtil;
 import Util.DatabaseUtil;
 
-import javax.crypto.*;
 import javax.swing.*;
 import javax.swing.text.StyledDocument;
-import java.awt.event.*;
-import java.security.*;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.awt.Color;
+import java.awt.event.*;
+
+import javax.crypto.*;
+import java.security.*;
+import java.sql.*;
+// import javax.xml.crypto.Data;
+// import java.util.Arrays;
 
 public class PasswordGenerator extends Page{
     
@@ -152,14 +154,27 @@ public class PasswordGenerator extends Page{
                 // ADD THE PASSWORD, EMAIL, WEBNAME TO DATABASE   
                 try{
                     SecretKey key = AesUtil.generateKey();
-                    String keystring = AesUtil.keyString(key);
+                    // String keystring = AesUtil.keyString(key);
                     Cipher encryption = AesUtil.encryptCipher(key);
                     String cipherPW = AesUtil.encrypt(encryption, password);
                     String IV = AesUtil.getIV(encryption);
                     String hashPW = "$2a$10$PS7VPSbAJNYglI2cT.aUiOJtsyEznDoGrMrM/wp0U9D2w/ATeN522";
 
                     DatabaseUtil.insertPasswordGen(con, user, websiteName, email, cipherPW, IV, hashPW);
-            
+                    
+                    // testing to see if query for array works or not (IT WORKS!!!!)
+                    // String[] x = DatabaseUtil.getWebName(con, user);
+                    // System.out.println(Arrays.toString(x));
+                    // System.out.println(x[1]);
+
+                    // test getting query from database and decrypting (IT WORKS!!!!!)
+                    // String[] userPWIV = DatabaseUtil.queryButton(con, user, websiteName);
+                    // String DBemail = userPWIV[0];
+                    // String DBcPW = userPWIV[1];
+                    // String DBiv = userPWIV[2];
+                    // String originalpassword = AesUtil.decrypt(keystring, DBiv, DBcPW);
+                    // System.out.println(originalpassword);
+
                     System.out.println(password); // check that latest password is added to database
                     webField.setText("");
                     emailField.setText("");
