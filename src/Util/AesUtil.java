@@ -28,9 +28,12 @@ public final class AesUtil{
     }
 
     // creates the encryption cipher 
-    public static Cipher encryptCipher(SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException{
+    public static Cipher encryptCipher(String key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException{
+        byte[] decodedKey = Base64.getDecoder().decode(key);
+        SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+        
         Cipher encryption = Cipher.getInstance("AES/GCM/NoPadding");
-        encryption.init(Cipher.ENCRYPT_MODE,key); //each encryption method is encrypted with their own key
+        encryption.init(Cipher.ENCRYPT_MODE,originalKey); //each encryption method is encrypted with their own key
         return encryption;
     }
     

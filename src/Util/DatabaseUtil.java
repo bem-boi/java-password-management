@@ -34,11 +34,12 @@ public final class DatabaseUtil {
     /* -------------------------------------------LOGIN AND REGISTRATION---------------------------------------------- */
 
     // if true means there's user in database, false if there is no user in database   https://stackoverflow.com/questions/17506762/how-to-handle-if-a-sql-query-finds-nothing-using-resultset-in-java
-    public static boolean checkUsernamePasswordLogin(Connection con, String username, String hashPW){
-        String sql = "SELECT * FROM users WHERE username='"+username+"' AND hashPW='"+hashPW+"'";
+    public static String checkUsernamePasswordLogin(Connection con, String username){
+        String sql = "SELECT * FROM users WHERE username='"+username+"'";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ResultSet s = ps.executeQuery();
-            return s.next();
+            s.next();
+            return s.getString("hashPW");
         }catch (SQLException e){
             throw new Error("Problem", e);
         }
@@ -46,7 +47,7 @@ public final class DatabaseUtil {
 
     // https://www.tutorialsfield.com/registration-form-in-java-with-database-connectivity/     
     public static void insertUsernamePasswordRegister(Connection con, String username, String hashPW, String cipherKey){ 
-        String sql = "INSERT INTO users (username, hashPW, encryption_key) VALUES('"+username+"' , '"+hashPW+"' , '"+cipherKey+"')";
+        String sql = "IF NOT EXISTS ( SELECT username FROM user WHERE username = '"+username+"') BEGIN INSERT INTO user (username) VALUES ('"+username+"') END";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.executeUpdate();
         }catch (SQLException e){

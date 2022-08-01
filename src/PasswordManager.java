@@ -1,7 +1,12 @@
+import Util.AesUtil;
+import Util.DatabaseUtil;
+
+import javax.crypto.*;
 import javax.swing.*;
 import java.awt.event.*;
-
-// https://docs.oracle.com/javase/tutorial/uiswing/examples/components/TabbedPaneDemoProject/src/components/TabbedPaneDemo.java
+import java.security.*;
+import java.sql.*;
+import java.util.Arrays;
 
 public class PasswordManager extends Page{
     public PasswordManager(int w, int h, String user){
@@ -11,12 +16,26 @@ public class PasswordManager extends Page{
         this.back = super.back;
     }   
 
-    public void show(){
+    public void show() throws SQLException{
+        PasswordDB = DatabaseUtil.connectDB(PasswordUrl);
+        UserDB = DatabaseUtil.connectDB(UserUrl);
+        
         frame.setTitle("Password Manager");
         panel.setLayout(null);
 
         back.addActionListener(new PopOutActionListener(frame));
-
+        // add another actionlistener for back button to reset the dropdown menu
+        back.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserDB.close();
+                    PasswordDB.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
 
         JTabbedPane tabbedPane = new JTabbedPane();
         JComponent panel1 = queryPane();
@@ -51,17 +70,44 @@ public class PasswordManager extends Page{
         frame.setVisible(true);
     }
 
-    // drop down menu https://www.delftstack.com/howto/java/java-drop-down-menu/#:~:text=Create%20a%20Dropdown%20Menu%20Using%20JComboBox%20in%20Java,-In%20this%20example&text=Below%2C%20we%20first%20create%20the,its%20argument%20in%20the%20constructor.
-
     // Query pane
-    protected JComponent queryPane(){ //use group layout here https://stackoverflow.com/questions/20299927/how-do-i-use-grouplayout-properly-to-move-components-panels
+    protected JComponent queryPane(){ 
+        JFrame dialog = new JFrame();
+
         JPanel panel = new JPanel();
-        JLabel tabs = new JLabel("Query");
-        tabs.setBounds(0,0,20,40);
-        JButton click = new JButton("Clik me");
-        click.setBounds(3,5,40,40);
-        panel.add(click);
-        panel.add(tabs);
+        panel.setLayout(null);
+        
+        JLabel choose = new JLabel("Choose a Website: ");
+        choose.setBounds(100,50,120,20);
+        panel.add(choose);
+        
+        String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
+        JComboBox<String> websiteNamesBox = new JComboBox<>(websiteNames);
+        
+        System.out.println(Arrays.toString(websiteNames));
+        
+        websiteNamesBox.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBox);
+        
+        JButton confirm = new JButton("Confirm");
+        confirm.setBounds(500,50,100,50);
+        confirm.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedWebsite = websiteNamesBox.getItemAt(websiteNamesBox.getSelectedIndex());
+                String[] EmailPwIV = DatabaseUtil.queryButton(PasswordDB, user, selectedWebsite);
+                String key = DatabaseUtil.getCipherKey(UserDB, user);
+                String ogpassword;
+                try {
+                    ogpassword = AesUtil.decrypt(key, EmailPwIV[2], EmailPwIV[1]);
+                    JOptionPane.showMessageDialog(dialog,"Password: " + ogpassword);  
+                } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException
+                        | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        panel.add(confirm);
         return panel;
     }
 

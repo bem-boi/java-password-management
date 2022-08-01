@@ -1,4 +1,5 @@
-import java.sql.SQLException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.*;
 
 import javax.swing.*;
 
@@ -9,7 +10,12 @@ public abstract class Template {
     protected int height;
     protected static String user;
 
-    public abstract void show() throws SQLException;
+    protected static String UserUrl = "jdbc:mysql://127.0.0.1/test";
+    protected static Connection UserDB;
+    protected static String PasswordUrl = "jdbc:mysql://127.0.0.1/test";
+    protected static Connection PasswordDB;
+
+    public abstract void show() throws SQLException, NoSuchAlgorithmException;
 
     public Template(int w, int h){
         frame = new JFrame();

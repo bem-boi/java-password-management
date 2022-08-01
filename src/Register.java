@@ -1,6 +1,14 @@
 import javax.swing.*;
+
+import Util.AesUtil;
+import Util.DatabaseUtil;
+import Util.HashUtil;
+
 import java.awt.event.*;
 // import java.awt.Color;
+
+import java.security.NoSuchAlgorithmException;
+import java.sql.*;
 
 public class Register extends Template{
     
@@ -11,47 +19,63 @@ public class Register extends Template{
     }
 
     public void show(){
-        frame.setTitle("Register Page");
-        frame.setJMenuBar(null);
+        try{
+            UserDB = DatabaseUtil.connectDB(UserUrl);
 
-        panel.setLayout(null);
+            frame.setTitle("Register Page");
+            frame.setJMenuBar(null);
 
-        JLabel userLabel = new JLabel("Username");
-        userLabel.setBounds(10,20,80,25);
-        panel.add(userLabel);
+            panel.setLayout(null);
 
-        JTextField userText = new JTextField(20);
-        userText.setBounds(100,20,165,25);
-        panel.add(userText);
+            JLabel userLabel = new JLabel("Username");
+            userLabel.setBounds(10,20,80,25);
+            panel.add(userLabel);
 
-        JLabel pwLabel = new JLabel("Password");
-        pwLabel.setBounds(10,50,80,25);
-        panel.add(pwLabel);
+            JTextField userText = new JTextField(20);
+            userText.setBounds(100,20,165,25);
+            panel.add(userText);
 
-        JPasswordField pwText = new JPasswordField(100);
-        pwText.setBounds(100,50,165,25);
-        panel.add(pwText);
+            JLabel pwLabel = new JLabel("Password");
+            pwLabel.setBounds(10,50,80,25);
+            panel.add(pwLabel);
 
-        JButton signUp = new JButton("Sign up");
-        signUp.setBounds(20,100,80,25);
-        panel.add(signUp);
+            JPasswordField pwText = new JPasswordField(100);
+            pwText.setBounds(100,50,165,25);
+            panel.add(pwText);
 
-        signUp.addActionListener(new ActionListener(){
+            JButton signUp = new JButton("Sign up");
+            signUp.setBounds(20,100,80,25);
+            panel.add(signUp);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                user = userText.getText();
-                MainPage MainPage = new MainPage(800,600, user);
-                MainPage.show();
-                frame.dispose();
-            }
+            signUp.addActionListener(new ActionListener(){
 
-        });
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    user = userText.getText();
+                    char[] pw = pwText.getPassword();
+                    String password = new String(pw);
+                    String hashPW = HashUtil.createHash(password); 
+                    MainPage MainPage = new MainPage(800,600, user);
+                    MainPage.show();
+                    frame.dispose(); // check if user is in database first
+                    String cipherKey;
+                    try {
+                        cipherKey = AesUtil.keyString(AesUtil.generateKey());
+                        DatabaseUtil.insertUsernamePasswordRegister(UserDB, user, hashPW, cipherKey);
+                        UserDB.close();
+                    } catch (NoSuchAlgorithmException | SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }
 
-        panel.revalidate();
-        panel.repaint();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+            });
+
+            panel.revalidate();
+            panel.repaint();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        }catch (SQLException e){
+            throw new Error(e);
+        }
     }
-
 }

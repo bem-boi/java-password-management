@@ -1,5 +1,6 @@
 import javax.swing.JFrame;
 import java.awt.event.*;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 public class PopOutActionListener implements ActionListener{
@@ -17,6 +18,8 @@ public class PopOutActionListener implements ActionListener{
             page.show();
             this.frame.dispose();
         } catch (SQLException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchAlgorithmException e1) {
             e1.printStackTrace();
         }
     }

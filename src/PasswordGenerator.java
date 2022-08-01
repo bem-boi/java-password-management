@@ -19,7 +19,6 @@ public class PasswordGenerator extends Page{
     private int password_length;
     private String websiteName;
     private String email;
-    private String url = "jdbc:mysql://127.0.0.1/test";
 
     private JTextPane textPane = new JTextPane();
 
@@ -31,10 +30,12 @@ public class PasswordGenerator extends Page{
     }
 
     public void show() throws SQLException{
+        // database connection
+        PasswordDB = DatabaseUtil.connectDB(PasswordUrl);
+        UserDB = DatabaseUtil.connectDB(UserUrl);
+
         frame.setTitle("Password Generator");
         panel.setLayout(null);
-
-        Connection con = DatabaseUtil.connectDB(url);
 
         back.addActionListener(new PopOutActionListener(frame));
         
@@ -78,6 +79,12 @@ public class PasswordGenerator extends Page{
                 emailField.setText("");
                 pwLengthField.setText("");
                 textPane.setVisible(false);
+                try {
+                    UserDB.close();
+                    PasswordDB.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }
 
         });
@@ -153,29 +160,16 @@ public class PasswordGenerator extends Page{
 
                 // ADD THE PASSWORD, EMAIL, WEBNAME TO DATABASE   
                 try{
-                    SecretKey key = AesUtil.generateKey();
-                    // String keystring = AesUtil.keyString(key);
+                    String key = DatabaseUtil.getCipherKey(UserDB, user);
+                    String hashPW = DatabaseUtil.getHashPW(UserDB, user)    ;
                     Cipher encryption = AesUtil.encryptCipher(key);
                     String cipherPW = AesUtil.encrypt(encryption, password);
                     String IV = AesUtil.getIV(encryption);
-                    String hashPW = "$2a$10$PS7VPSbAJNYglI2cT.aUiOJtsyEznDoGrMrM/wp0U9D2w/ATeN522";
 
-                    DatabaseUtil.insertPasswordGen(con, user, websiteName, email, cipherPW, IV, hashPW);
-                    
-                    // testing to see if query for array works or not (IT WORKS!!!!)
-                    // String[] x = DatabaseUtil.getWebName(con, user);
-                    // System.out.println(Arrays.toString(x));
-                    // System.out.println(x[1]);
+                    DatabaseUtil.insertPasswordGen(PasswordDB, user, websiteName, email, cipherPW, IV, hashPW); // insert to database
 
-                    // test getting query from database and decrypting (IT WORKS!!!!!)
-                    // String[] userPWIV = DatabaseUtil.queryButton(con, user, websiteName);
-                    // String DBemail = userPWIV[0];
-                    // String DBcPW = userPWIV[1];
-                    // String DBiv = userPWIV[2];
-                    // String originalpassword = AesUtil.decrypt(keystring, DBiv, DBcPW);
-                    // System.out.println(originalpassword);
+                    System.out.println("Password is " + password); // password that should be added to database
 
-                    System.out.println(password); // check that latest password is added to database
                     webField.setText("");
                     emailField.setText("");
                     pwLengthField.setText("");
