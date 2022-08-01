@@ -47,7 +47,7 @@ public final class DatabaseUtil {
 
     // https://www.tutorialsfield.com/registration-form-in-java-with-database-connectivity/     
     public static void insertUsernamePasswordRegister(Connection con, String username, String hashPW, String cipherKey){ 
-        String sql = "IF NOT EXISTS ( SELECT username FROM user WHERE username = '"+username+"') BEGIN INSERT INTO user (username) VALUES ('"+username+"') END";
+        String sql = "INSERT INTO users (username, hashPW, encryption_key) VALUES('"+username+"' , '"+hashPW+"' , '"+cipherKey+"')";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.executeUpdate();
         }catch (SQLException e){
