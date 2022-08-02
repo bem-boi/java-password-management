@@ -174,9 +174,9 @@ public final class DatabaseUtil {
     
     // update passwords in database if inputed password is the same as hashPW             
     public static void changeButton(Connection con, String user, String webname, String newCipherPW, String newIV){
-        String sql = "UPDATE password SET cipherPW="+newCipherPW+" and IV="+newIV+" WHERE webname='"+webname+"' AND user='"+user+"'";
+        String sql = "UPDATE password SET cipherPW='"+newCipherPW+"', IV='"+newIV+"' WHERE webname='"+webname+"' AND user='"+user+"'"; 
         try (PreparedStatement ps = con.prepareStatement(sql)){  
-            ps.execute(); // smth wrong here i think
+            ps.execute(); 
             System.out.println("Database updated successfully ");
         }catch (SQLException e){
             throw new Error("Problem", e);
