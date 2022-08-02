@@ -1,4 +1,7 @@
+import java.sql.*;
 import java.util.Stack;
+
+import Util.DatabaseUtil;
 
 // import Util.PasswordGenUtils;
 
@@ -15,9 +18,17 @@ public class Application {
         backStack = new Stack<Page>();
     }
 
-    public void runApp(){
-        Login loginPage = new Login(350,200);
-        loginPage.show();
+    public void runApp() throws SQLException{
+        Connection UserDB = DatabaseUtil.connectDB("jdbc:mysql://127.0.0.1/test");
+        if(!DatabaseUtil.firstTime(UserDB)){
+            Login loginPage = new Login(350,200);
+            loginPage.show();
+            UserDB.close();
+        }else{
+            Register registerPage = new Register(350, 200);
+            registerPage.show();
+            UserDB.close();
+        }
     }
 
     public static void main(String[] args) throws Exception {
