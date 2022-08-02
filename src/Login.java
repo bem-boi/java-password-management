@@ -59,13 +59,18 @@ public class Login extends Template{
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     user = userText.getText(); // check if user is in database first else return wrong
-                    char[] passwordchar = pwText.getPassword();
-                    String password = new String(passwordchar);
-                    String hashPW = DatabaseUtil.checkUsernamePasswordLogin(UserDB, user);
-                    if(HashUtil.checkHash(password, hashPW)){
-                        MainPage MainPage = new MainPage(800,600, user);
-                        MainPage.show();
-                        frame.dispose();
+                    if (DatabaseUtil.checkUsername(UserDB,user)){
+                        char[] passwordchar = pwText.getPassword();
+                        String password = new String(passwordchar);
+                        String hashPW = DatabaseUtil.checkUsernamePasswordLogin(UserDB, user);
+                        if(HashUtil.checkHash(password, hashPW)){
+                            MainPage MainPage = new MainPage(800,600, user);
+                            MainPage.show();
+                            frame.dispose();
+                        }else{
+                            wrong.setText("Wrong username or password");
+                            wrong.setForeground(Color.RED);
+                        }
                     }else{
                         wrong.setText("Wrong username or password");
                         wrong.setForeground(Color.RED);

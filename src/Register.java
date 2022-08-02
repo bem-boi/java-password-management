@@ -5,7 +5,7 @@ import Util.DatabaseUtil;
 import Util.HashUtil;
 
 import java.awt.event.*;
-// import java.awt.Color;
+import java.awt.Color;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
@@ -43,6 +43,10 @@ public class Register extends Template{
             pwText.setBounds(100,50,165,25);
             panel.add(pwText);
 
+            JLabel wrong = new JLabel("");
+            wrong.setBounds(20,75,200,25);
+            panel.add(wrong);
+
             JButton signUp = new JButton("Sign up");
             signUp.setBounds(20,100,80,25);
             panel.add(signUp);
@@ -52,19 +56,24 @@ public class Register extends Template{
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     user = userText.getText();
-                    char[] pw = pwText.getPassword();
-                    String password = new String(pw);
-                    String hashPW = HashUtil.createHash(password); 
-                    MainPage MainPage = new MainPage(800,600, user);
-                    MainPage.show();
-                    frame.dispose(); // check if user is in database first
-                    String cipherKey;
-                    try {
-                        cipherKey = AesUtil.keyString(AesUtil.generateKey());
-                        DatabaseUtil.insertUsernamePasswordRegister(UserDB, user, hashPW, cipherKey);
-                        UserDB.close();
-                    } catch (NoSuchAlgorithmException | SQLException e1) {
-                        e1.printStackTrace();
+                    if (!DatabaseUtil.checkUsername(UserDB, user)){
+                        char[] pw = pwText.getPassword();
+                        String password = new String(pw);
+                        String hashPW = HashUtil.createHash(password); 
+                        MainPage MainPage = new MainPage(800,600, user);
+                        String cipherKey;
+                        try {
+                            cipherKey = AesUtil.keyString(AesUtil.generateKey());
+                            DatabaseUtil.insertUsernamePasswordRegister(UserDB, user, hashPW, cipherKey);
+                            UserDB.close();
+                        } catch (NoSuchAlgorithmException | SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                        MainPage.show();
+                        frame.dispose(); // check if user is in database first
+                    }else{
+                        wrong.setText("User already exists");
+                        wrong.setForeground(Color.RED);
                     }
                 }
 

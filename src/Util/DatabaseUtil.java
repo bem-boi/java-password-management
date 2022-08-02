@@ -33,6 +33,16 @@ public final class DatabaseUtil {
 
     /* -------------------------------------------LOGIN AND REGISTRATION---------------------------------------------- */
 
+    public static boolean checkUsername(Connection con, String username){
+        String sql = "SELECT * FROM users WHERE username='"+username+"'";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ResultSet s = ps.executeQuery();
+            return s.next();
+        }catch (SQLException e){
+            throw new Error("Problem", e);
+        }
+    }
+
     // if true means there's user in database, false if there is no user in database   https://stackoverflow.com/questions/17506762/how-to-handle-if-a-sql-query-finds-nothing-using-resultset-in-java
     public static String checkUsernamePasswordLogin(Connection con, String username){
         String sql = "SELECT * FROM users WHERE username='"+username+"'";
