@@ -93,7 +93,7 @@ public class PasswordGenerator extends Page{
         JButton confirm = new JButton("Confirm");
         confirm.setBounds(450,240,100,50);
         confirm.setFocusPainted(false);
-        confirm.setVisible(true);
+        confirm.setVisible(false);
         panel.add(confirm);
         
         // password text and generate button
@@ -115,39 +115,44 @@ public class PasswordGenerator extends Page{
                 // generate password
                 boolean cond = true;
                 websiteName = webField.getText();
-                email = emailField.getText();
-                if (PasswordGenUtils.isValidEmail(email)){
-                    try {
-                        while (cond){
-                            password_length = Integer.parseInt(pwLengthField.getText());
-                            password = PasswordGenUtils.generatePassword(password_length);
-                            if (PasswordGenUtils.isValidPassword(password)){
-                                cond = false;
-                                break;
+                if (!websiteName.equals("")){
+                    email = emailField.getText();
+                    if (PasswordGenUtils.isValidEmail(email)){
+                        try {
+                            while (cond){
+                                password_length = Integer.parseInt(pwLengthField.getText());
+                                password = PasswordGenUtils.generatePassword(password_length);
+                                if (PasswordGenUtils.isValidPassword(password)){
+                                    cond = false;
+                                    break;
+                                }
                             }
+    
+                            textPane.setEditable(false);
+                            StyledDocument doc = textPane.getStyledDocument();
+                            try{
+                                doc.insertString(doc.getLength(), "Website: " + websiteName + "\n", null);
+                                doc.insertString(doc.getLength(), "Email: " + email + "\n", null );
+                                doc.insertString(doc.getLength(), "Password: " + password + "\n", null );
+                            }
+                            catch (Exception E){
+                                System.out.println(E);
+                            }
+                            textPane.setBounds(400,50,300,100);
+                            panel.add(textPane);
+    
+                            confirm.setVisible(true);
+                        }catch (NumberFormatException inputError){
+                            textPane.setVisible(false);
+                            errorLabel.setText("Put in a number");
                         }
-
-                        textPane.setEditable(false);
-                        StyledDocument doc = textPane.getStyledDocument();
-                        try{
-                            doc.insertString(doc.getLength(), "Website: " + websiteName + "\n", null);
-                            doc.insertString(doc.getLength(), "Email: " + email + "\n", null );
-                            doc.insertString(doc.getLength(), "Password: " + password + "\n", null );
-                        }
-                        catch (Exception E){
-                            System.out.println(E);
-                        }
-                        textPane.setBounds(400,50,300,100);
-                        panel.add(textPane);
-
-                        confirm.setVisible(true);
-                    }catch (NumberFormatException inputError){
+                    }else{
                         textPane.setVisible(false);
-                        errorLabel.setText("Put in a number");
+                        errorLabel.setText("Not a valid email");
                     }
                 }else{
                     textPane.setVisible(false);
-                    errorLabel.setText("Not a valid email");
+                        errorLabel.setText("Put in a website name");
                 }
             }
 
