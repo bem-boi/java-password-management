@@ -80,7 +80,7 @@ public class PasswordManager extends Page{
         frame.setVisible(true);
     }
 
-    // Query pane
+    /* -------------------------------------------QUERY PANE---------------------------------------------- */
     protected JComponent queryPane(){ 
         JFrame dialog = new JFrame();
 
@@ -100,7 +100,7 @@ public class PasswordManager extends Page{
         panel.add(websiteNamesBoxQuery);
         
         JButton confirmQuery = new JButton("Confirm");
-        confirmQuery.setBounds(500,50,100,50);
+        confirmQuery.setBounds(470,50,100,50);
         confirmQuery.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +121,7 @@ public class PasswordManager extends Page{
         return panel;
     }
 
-    // add pane
+    /* -------------------------------------------ADD PANE---------------------------------------------- */
     protected JComponent addPane(){
         JTextPane textPane = new JTextPane();
         
@@ -260,7 +260,7 @@ public class PasswordManager extends Page{
         return panel;
     }
 
-    // edit pane
+    /* -------------------------------------------EDIT PANE---------------------------------------------- */
     protected JComponent editPane(){ 
         JFrame errorDialog = new JFrame();
         
@@ -343,20 +343,49 @@ public class PasswordManager extends Page{
         return panel;
     }
 
-    // delete pane
+    /* -------------------------------------------DELETE PANE---------------------------------------------- */
     protected JComponent deletePane(){
+        JFrame errorDialog = new JFrame();
+        
         JPanel panel = new JPanel();
-        JLabel tabs = new JLabel("Delete");
-        tabs.setBounds(0,0,20,40);
-        JButton click = new JButton("Clik me");
-        click.setBounds(3,5,40,40);
-        panel.add(click);
-        panel.add(tabs);
+        panel.setLayout(null);
+        
+        JLabel choose = new JLabel("Choose a Website: ");
+        choose.setBounds(100,50,120,20);
+        panel.add(choose);
+        
+        JLabel errorMessage = new JLabel("");
+        errorMessage.setBounds(100,200,165,25);
+        panel.add(errorMessage);
+
+        String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
+        JComboBox<String> websiteNamesBoxDelete = new JComboBox<>(websiteNames);
+        
+        websiteNamesBoxDelete.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBoxDelete);
+        
+        JButton confirmDelete = new JButton("Remove");
+        confirmDelete.setBounds(470,50,100,50);
+        confirmDelete.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedWebsite = websiteNamesBoxDelete.getItemAt(websiteNamesBoxDelete.getSelectedIndex());
+                errorMessage.setText("");
+                String passwordCheck = JOptionPane.showInputDialog("Type in your password to delete this record:");
+                if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
+                    DatabaseUtil.deleteButton(PasswordDB, user, selectedWebsite);
+                }else{
+                    JOptionPane.showMessageDialog(errorDialog, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        panel.add(confirmDelete);
+
         return panel;
     }
 
-    // check pane
-    protected JComponent checkPane(){ // use isvalidpassword from pwgenutil
+    /* -------------------------------------------CHECK PANE---------------------------------------------- */
+    protected JComponent checkPane(){ // use isvalidpassword from pwgenutil  // also maybe add feature wherre they can use the password generation to change their password
         JPanel panel = new JPanel();
         JLabel tabs = new JLabel("Check");
         tabs.setBounds(0,0,20,40);

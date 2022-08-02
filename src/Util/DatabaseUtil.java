@@ -142,18 +142,10 @@ public final class DatabaseUtil {
     /* -------------------------------------------DELETE DATA---------------------------------------------- */
 
     // first checks if the password inputed is the same as the hashPW, if it's the same then it executes the delete SQL statement     
-    public static void deleteButton(Connection con, String user, String webname, String hashPW){
-        String sql = "SELECT * FROM password WHERE webname='"+webname+"' AND user='"+user+"'";
-        try(PreparedStatement ps = con.prepareStatement(sql)){
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            if (hashPW.equals(rs.getString(hashPW))){
-                String sqlDelete = "DELETE FROM password WHERE webname='"+webname+"' AND user='"+user+"'";
-                PreparedStatement psDelete = con.prepareStatement(sqlDelete);
-                psDelete.executeUpdate();
-            }else{
-                System.out.println("Incorrect password");
-            }
+    public static void deleteButton(Connection con, String user, String webname){
+        String sqlDelete = "DELETE FROM password WHERE webname='"+webname+"' AND user='"+user+"'";
+        try(PreparedStatement psDelete = con.prepareStatement(sqlDelete)){
+            psDelete.executeUpdate();
         }catch (SQLException e){
             throw new Error("Problem", e);
         }
