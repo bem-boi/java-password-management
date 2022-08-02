@@ -161,19 +161,23 @@ public final class DatabaseUtil {
 
     /* -------------------------------------------MODIFY DATA---------------------------------------------- */
 
+    public static boolean checkPassword(Connection con, String password, String user){
+        String sql = "SELECT hashPW FROM users WHERE username='"+user+"'";
+        try (PreparedStatement ps = con.prepareStatement(sql)){  
+            ResultSet s = ps.executeQuery(); 
+            s.next();
+            return HashUtil.checkHash(password, s.getString(1));
+        }catch (SQLException e){
+            throw new Error("Problem", e);
+        }
+    }
+    
     // update passwords in database if inputed password is the same as hashPW             
-    public static void changeButton(Connection con, String user, String webname, String hashPW, String newCipherPW, String newIV){
-        String sql = "SELECT * FROM password WHERE webname='"+webname+"' AND user='"+user+"'";
-        try(PreparedStatement ps = con.prepareStatement(sql)){
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            if (hashPW.equals(rs.getString(hashPW))){
-                String sqlUpdate = "UPDATE password SET cipherPW='"+newCipherPW+"' and IV = '"+newIV+"' WHERE webname='"+webname+"' AND user='"+user+"'";
-                PreparedStatement psUpdate = con.prepareStatement(sqlUpdate);
-                psUpdate.executeUpdate();
-            }else{
-                System.out.println("Incorrect password");
-            }
+    public static void changeButton(Connection con, String user, String webname, String newCipherPW, String newIV){
+        String sql = "UPDATE password SET cipherPW="+newCipherPW+" and IV="+newIV+" WHERE webname='"+webname+"' AND user='"+user+"'";
+        try (PreparedStatement ps = con.prepareStatement(sql)){  
+            ps.execute(); // smth wrong here i think
+            System.out.println("Database updated successfully ");
         }catch (SQLException e){
             throw new Error("Problem", e);
         }
@@ -182,7 +186,7 @@ public final class DatabaseUtil {
     /* -------------------------------------------CHECK PASSWORD---------------------------------------------- */
 
     // decrypts the password first and returns a hash table with array inside     
-    public static HashMap<Integer, String[]> checkPW(Connection con, String user) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
+    public static HashMap<Integer, String[]> checkPWPMap(Connection con, String user) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
         HashMap<Integer, String[]> password_dict = new HashMap<Integer, String[]>();
         String key = getCipherKey(con, user);
         String sql = "SELECT * FROM password WHERE user='"+user+"'";

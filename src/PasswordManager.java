@@ -17,6 +17,8 @@ public class PasswordManager extends Page{
     private String password = "";
     private String websiteName = "";
     private String email = "";
+
+    private JComboBox<String> websiteNamesBox;
     
     public PasswordManager(int w, int h, String user){
         super(w,h);
@@ -91,7 +93,7 @@ public class PasswordManager extends Page{
         panel.add(choose);
         
         String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
-        JComboBox<String> websiteNamesBox = new JComboBox<>(websiteNames);
+        websiteNamesBox = new JComboBox<>(websiteNames);
         
         System.out.println(Arrays.toString(websiteNames));
         
@@ -224,7 +226,7 @@ public class PasswordManager extends Page{
                 // ADD THE PASSWORD, EMAIL, WEBNAME TO DATABASE   
                 try{
                     String key = DatabaseUtil.getCipherKey(UserDB, user);
-                    String hashPW = DatabaseUtil.getHashPW(UserDB, user)    ;
+                    String hashPW = DatabaseUtil.getHashPW(UserDB, user);
                     Cipher encryption = AesUtil.encryptCipher(key);
                     String cipherPW = AesUtil.encrypt(encryption, password);
                     String IV = AesUtil.getIV(encryption);
@@ -251,12 +253,51 @@ public class PasswordManager extends Page{
     // edit pane
     protected JComponent editPane(){
         JPanel panel = new JPanel();
-        JLabel tabs = new JLabel("Edit");
-        tabs.setBounds(0,0,20,40);
-        JButton click = new JButton("Clik me");
-        click.setBounds(3,5,40,40);
-        panel.add(click);
-        panel.add(tabs);
+        panel.setLayout(null);
+        
+        JLabel choose = new JLabel("Choose a Website: ");
+        choose.setBounds(100,50,120,20);
+        panel.add(choose);
+
+        JTextField pwField = new JTextField(100);
+        pwField.setBounds(130,100,225,25);
+        panel.add(pwField);
+
+        JLabel pwLabel = new JLabel("New Password: ");
+        pwLabel.setBounds(70,100,165,25);
+        panel.add(pwLabel);
+        
+        String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
+        websiteNamesBox = new JComboBox<>(websiteNames);
+        
+        websiteNamesBox.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBox);
+        
+        JButton confirm = new JButton("Modify");
+        confirm.setBounds(500,50,100,50);
+        confirm.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedWebsite = websiteNamesBox.getItemAt(websiteNamesBox.getSelectedIndex());
+                password = pwField.getText();
+                try{
+                    String key = DatabaseUtil.getCipherKey(UserDB, user);
+                    Cipher newencryption = AesUtil.encryptCipher(key);
+                    String newCipherPW = AesUtil.encrypt(newencryption, password);
+                    String newIV = AesUtil.getIV(newencryption);
+    
+                    String passwordCheck = JOptionPane.showInputDialog("Type in your password to modify password:");
+                    if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
+                        DatabaseUtil.changeButton(PasswordDB, user, selectedWebsite, newCipherPW, newIV);
+                    }else{
+                        System.out.println("wrong password");
+                    }
+                }catch (NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex){
+                    throw new Error("Wrong");
+                }
+            }
+        });
+        panel.add(confirm);
         return panel;
     }
 
