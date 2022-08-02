@@ -18,8 +18,6 @@ public class PasswordManager extends Page{
     private String websiteName;
     private String email;
     private String passwordRetype;
-
-    private JComboBox<String> websiteNamesBox;
     
     public PasswordManager(int w, int h, String user){
         super(w,h);
@@ -94,19 +92,19 @@ public class PasswordManager extends Page{
         panel.add(choose);
         
         String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
-        websiteNamesBox = new JComboBox<>(websiteNames);
+        JComboBox<String> websiteNamesBoxQuery = new JComboBox<>(websiteNames);
         
         System.out.println(Arrays.toString(websiteNames));
         
-        websiteNamesBox.setBounds(250, 50, 140, 20);
-        panel.add(websiteNamesBox);
+        websiteNamesBoxQuery.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBoxQuery);
         
         JButton confirmQuery = new JButton("Confirm");
         confirmQuery.setBounds(500,50,100,50);
         confirmQuery.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedWebsite = websiteNamesBox.getItemAt(websiteNamesBox.getSelectedIndex());
+                String selectedWebsite = websiteNamesBoxQuery.getItemAt(websiteNamesBoxQuery.getSelectedIndex());
                 String[] EmailPwIV = DatabaseUtil.queryButton(PasswordDB, user, selectedWebsite);
                 String key = DatabaseUtil.getCipherKey(UserDB, user);
                 String ogpassword;
@@ -294,17 +292,17 @@ public class PasswordManager extends Page{
         panel.add(errorMessage);
 
         String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
-        websiteNamesBox = new JComboBox<>(websiteNames);
+        JComboBox<String> websiteNamesBoxEdit = new JComboBox<>(websiteNames);
         
-        websiteNamesBox.setBounds(250, 50, 140, 20);
-        panel.add(websiteNamesBox);
+        websiteNamesBoxEdit.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBoxEdit);
         
         JButton confirmEdit = new JButton("Modify");
         confirmEdit.setBounds(550,75,100,50);
         confirmEdit.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedWebsite = websiteNamesBox.getItemAt(websiteNamesBox.getSelectedIndex());
+                String selectedWebsite = websiteNamesBoxEdit.getItemAt(websiteNamesBoxEdit.getSelectedIndex());
                 passwordRetype = pwRetypeField.getText();
                 password = pwField.getText();
                 if (password.equals(passwordRetype) && PasswordGenUtils.isValidPassword(password)){
