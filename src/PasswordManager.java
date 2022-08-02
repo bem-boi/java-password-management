@@ -14,11 +14,10 @@ import java.util.Arrays;
 
 public class PasswordManager extends Page{
     
-    private String password = "";
-    private String websiteName = "";
-    private String email = "";
-
-    private JComboBox<String> websiteNamesBox;
+    private String password;
+    private String websiteName;
+    private String email;
+    private String passwordRetype;
     
     public PasswordManager(int w, int h, String user){
         super(w,h);
@@ -93,19 +92,19 @@ public class PasswordManager extends Page{
         panel.add(choose);
         
         String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
-        websiteNamesBox = new JComboBox<>(websiteNames);
+        JComboBox<String> websiteNamesBoxQuery = new JComboBox<>(websiteNames);
         
         System.out.println(Arrays.toString(websiteNames));
         
-        websiteNamesBox.setBounds(250, 50, 140, 20);
-        panel.add(websiteNamesBox);
+        websiteNamesBoxQuery.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBoxQuery);
         
-        JButton confirm = new JButton("Confirm");
-        confirm.setBounds(500,50,100,50);
-        confirm.addActionListener(new ActionListener(){
+        JButton confirmQuery = new JButton("Confirm");
+        confirmQuery.setBounds(500,50,100,50);
+        confirmQuery.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedWebsite = websiteNamesBox.getItemAt(websiteNamesBox.getSelectedIndex());
+                String selectedWebsite = websiteNamesBoxQuery.getItemAt(websiteNamesBoxQuery.getSelectedIndex());
                 String[] EmailPwIV = DatabaseUtil.queryButton(PasswordDB, user, selectedWebsite);
                 String key = DatabaseUtil.getCipherKey(UserDB, user);
                 String ogpassword;
@@ -118,7 +117,7 @@ public class PasswordManager extends Page{
                 }
             }
         });
-        panel.add(confirm);
+        panel.add(confirmQuery);
         return panel;
     }
 
@@ -159,11 +158,11 @@ public class PasswordManager extends Page{
         panel.add(errorLabel);
 
         // button to confirm the textfields and add it to database
-        JButton confirm = new JButton("Confirm");
-        confirm.setBounds(450,240,100,50);
-        confirm.setFocusPainted(false);
-        confirm.setVisible(false);
-        panel.add(confirm);
+        JButton confirmAdd = new JButton("Confirm");
+        confirmAdd.setBounds(450,240,100,50);
+        confirmAdd.setFocusPainted(false);
+        confirmAdd.setVisible(false);
+        panel.add(confirmAdd);
         
         
         // password text and generate button
@@ -200,7 +199,7 @@ public class PasswordManager extends Page{
                             textPane.setBounds(400,50,300,100);
                             panel.add(textPane);
                             
-                            confirm.setVisible(true);
+                            confirmAdd.setVisible(true);
                         }else{
                             textPane.setVisible(false);
                             errorLabel.setText("Invalid password");
@@ -218,8 +217,7 @@ public class PasswordManager extends Page{
         });
         panel.add(addPW);
 
-        confirm.addActionListener(new ActionListener(){
-        
+        confirmAdd.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -240,18 +238,32 @@ public class PasswordManager extends Page{
                     pwField.setText("");
                     errorLabel.setText("");
                     textPane.setVisible(false);
-                    confirm.setVisible(false);
+                    confirmAdd.setVisible(false);
                 }catch (NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex){
                     throw new Error("Wrong");
                 }
             }
-        
         });
+
+        back.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                webField.setText("");
+                emailField.setText("");
+                pwField.setText("");
+                errorLabel.setText("");
+                textPane.setVisible(false);
+                confirmAdd.setVisible(false);
+            }
+        });
+
         return panel;
     }
 
     // edit pane
-    protected JComponent editPane(){
+    protected JComponent editPane(){ 
+        JFrame errorDialog = new JFrame();
+        
         JPanel panel = new JPanel();
         panel.setLayout(null);
         
@@ -260,44 +272,74 @@ public class PasswordManager extends Page{
         panel.add(choose);
 
         JTextField pwField = new JTextField(100);
-        pwField.setBounds(130,100,225,25);
+        pwField.setBounds(250,100,225,25);
         panel.add(pwField);
 
         JLabel pwLabel = new JLabel("New Password: ");
-        pwLabel.setBounds(70,100,165,25);
+        pwLabel.setBounds(100,100,165,25);
         panel.add(pwLabel);
+
+        JTextField pwRetypeField = new JTextField(100);
+        pwRetypeField.setBounds(250,150,225,25);
+        panel.add(pwRetypeField);
+
+        JLabel pwRetypeLabel = new JLabel("Retype your Password: ");
+        pwRetypeLabel.setBounds(100,150,165,25);
+        panel.add(pwRetypeLabel);
         
+        JLabel errorMessage = new JLabel("");
+        errorMessage.setBounds(100,200,165,25);
+        panel.add(errorMessage);
+
         String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
-        websiteNamesBox = new JComboBox<>(websiteNames);
+        JComboBox<String> websiteNamesBoxEdit = new JComboBox<>(websiteNames);
         
-        websiteNamesBox.setBounds(250, 50, 140, 20);
-        panel.add(websiteNamesBox);
+        websiteNamesBoxEdit.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBoxEdit);
         
-        JButton confirm = new JButton("Modify");
-        confirm.setBounds(500,50,100,50);
-        confirm.addActionListener(new ActionListener(){
+        JButton confirmEdit = new JButton("Modify");
+        confirmEdit.setBounds(550,75,100,50);
+        confirmEdit.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedWebsite = websiteNamesBox.getItemAt(websiteNamesBox.getSelectedIndex());
+                String selectedWebsite = websiteNamesBoxEdit.getItemAt(websiteNamesBoxEdit.getSelectedIndex());
+                passwordRetype = pwRetypeField.getText();
                 password = pwField.getText();
-                try{
-                    String key = DatabaseUtil.getCipherKey(UserDB, user);
-                    Cipher newencryption = AesUtil.encryptCipher(key);
-                    String newCipherPW = AesUtil.encrypt(newencryption, password);
-                    String newIV = AesUtil.getIV(newencryption);
-    
-                    String passwordCheck = JOptionPane.showInputDialog("Type in your password to modify password:");
-                    if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
-                        DatabaseUtil.changeButton(PasswordDB, user, selectedWebsite, newCipherPW, newIV);
-                    }else{
-                        System.out.println("wrong password");
+                if (password.equals(passwordRetype) && PasswordGenUtils.isValidPassword(password)){
+                    errorMessage.setText("");
+                    try{
+                        String key = DatabaseUtil.getCipherKey(UserDB, user);
+                        Cipher newencryption = AesUtil.encryptCipher(key);
+                        String newCipherPW = AesUtil.encrypt(newencryption, password);
+                        String newIV = AesUtil.getIV(newencryption);
+        
+                        String passwordCheck = JOptionPane.showInputDialog("Type in your password to modify password:");
+                        if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
+                            pwField.setText("");
+                            pwRetypeField.setText("");
+                            DatabaseUtil.changeButton(PasswordDB, user, selectedWebsite, newCipherPW, newIV);
+                        }else{
+                            JOptionPane.showMessageDialog(errorDialog, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }catch (NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex){
+                        throw new Error("Wrong");
                     }
-                }catch (NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex){
-                    throw new Error("Wrong");
+                }else{
+                    errorMessage.setText("Invalid password");
+                    errorMessage.setForeground(Color.RED);
                 }
             }
         });
-        panel.add(confirm);
+        panel.add(confirmEdit);
+
+        back.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pwField.setText("");
+                pwRetypeField.setText("");
+            }
+        });
+
         return panel;
     }
 
