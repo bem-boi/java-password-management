@@ -473,6 +473,7 @@ public class PasswordManager extends Page{
                             select.setVisible(true);
                             pwLengthField.setVisible(true);
                             pwlengthLabel.setVisible(true);
+                            checkButton.setVisible(false);
                         }else{
                             weakpasswordsBox.setVisible(false);
                             queryWeakPassword.setVisible(false);
@@ -576,6 +577,7 @@ public class PasswordManager extends Page{
                         pwLengthField.setText("");
                         errorMessage.setText("");
                         textPane.setVisible(false);
+                        checkButton.setVisible(true);
                     }else{
                         JOptionPane.showMessageDialog(dialog, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -597,6 +599,7 @@ public class PasswordManager extends Page{
                 select.setVisible(false);
                 confirmChange.setVisible(false);
                 textPane.setVisible(false);
+                checkButton.setVisible(true);
                 pwLengthField.setText("");
                 errorMessage.setText("");
             }
