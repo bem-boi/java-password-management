@@ -327,6 +327,7 @@ public class PasswordManager extends Page{
                         if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
                             pwField.setText("");
                             pwRetypeField.setText("");
+                            errorMessage.setText("");
                             DatabaseUtil.changeButton(PasswordDB, user, selectedWebsite, newCipherPW, newIV);
                         }else{
                             JOptionPane.showMessageDialog(errorDialog, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
@@ -397,6 +398,7 @@ public class PasswordManager extends Page{
     /* -------------------------------------------CHECK PANE---------------------------------------------- */
     protected JComponent checkPane(){
         JFrame dialog = new JFrame();
+        
         JTextPane textPane = new JTextPane();
         textPane.setVisible(false);
 
@@ -404,12 +406,12 @@ public class PasswordManager extends Page{
         panel.setLayout(null);
 
         JTextField pwLengthField = new JTextField(100);
-        pwLengthField.setBounds(190,150,165,25);
+        pwLengthField.setBounds(190,200,165,25);
         pwLengthField.setVisible(false);
         panel.add(pwLengthField);
 
         JLabel pwlengthLabel = new JLabel("Password Length");
-        pwlengthLabel.setBounds(70,150,165,25);
+        pwlengthLabel.setBounds(70,200,165,25);
         pwlengthLabel.setVisible(false);
         panel.add(pwlengthLabel);
         
@@ -419,20 +421,31 @@ public class PasswordManager extends Page{
         panel.add(queryWeakPassword);
         
         JButton changePasswordButton = new JButton("Change Password");
-        changePasswordButton.setBounds(500,300,150,50);
+        changePasswordButton.setBounds(400,300,150,50);
         changePasswordButton.setVisible(false);
         panel.add(changePasswordButton);
 
         JLabel errorMessage = new JLabel("");
-        errorMessage.setBounds(100,500,300,25);
+        errorMessage.setBounds(70,250,300,25);
         errorMessage.setForeground(Color.RED);
+        errorMessage.setVisible(false);
         panel.add(errorMessage);
 
+        JButton confirmChange = new JButton("Confirm");
+        confirmChange.setBounds(300,400,150,50);
+        confirmChange.setVisible(false);
+        panel.add(confirmChange);
+
         JComboBox<String> weakpasswordsBox = new JComboBox<>();
-        weakpasswordsBox.setBounds(250, 200, 140, 20);
+        weakpasswordsBox.setBounds(190, 150, 140, 20);
         weakpasswordsBox.setVisible(false);
         panel.add(weakpasswordsBox);
         
+        JLabel select = new JLabel("Select Website: ");
+        select.setBounds(70,150,165,25);
+        select.setVisible(false);
+        panel.add(select);
+
         JButton checkButton = new JButton("Check Passwords");
         checkButton.setBounds(300,50,150,50);
         checkButton.addActionListener(new ActionListener(){
@@ -457,18 +470,20 @@ public class PasswordManager extends Page{
                             weakpasswordsBox.setVisible(true);
                             queryWeakPassword.setVisible(true);
                             changePasswordButton.setVisible(true);
+                            select.setVisible(true);
                             pwLengthField.setVisible(true);
                             pwlengthLabel.setVisible(true);
                         }else{
                             weakpasswordsBox.setVisible(false);
                             queryWeakPassword.setVisible(false);
                             changePasswordButton.setVisible(false);
+                            select.setVisible(false);
                             pwLengthField.setVisible(false);
                             pwlengthLabel.setVisible(false);
-                            System.out.println("No insecure password");
+                            JOptionPane.showMessageDialog(dialog,"No Weak Password");
                         }
                     }else{
-                        System.out.println("No password yet");
+                        JOptionPane.showMessageDialog(dialog,"No Password in Database");
                     }
                 } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException
                         | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e1) {
@@ -500,6 +515,8 @@ public class PasswordManager extends Page{
         changePasswordButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
+                textPane.setText("");
+                errorMessage.setText("");
                 try {
                     String selectedWebsite = weakpasswordsBox.getItemAt(weakpasswordsBox.getSelectedIndex());
                     boolean cond = true;
@@ -513,41 +530,57 @@ public class PasswordManager extends Page{
                     }
 
                     textPane.setEditable(false);
+                    textPane.setVisible(true);
                     StyledDocument doc = textPane.getStyledDocument();
                     try{
+                        doc.insertString(doc.getLength(), "Website: " + selectedWebsite + "\n", null );
                         doc.insertString(doc.getLength(), "New Password: " + password + "\n", null );
                     }
                     catch (Exception E){
                         System.out.println(E);
                     }
-                    textPane.setBounds(400,50,300,100);
+                    textPane.setBounds(400,150,300,80);
                     panel.add(textPane);
-
+                    confirmChange.setVisible(true);
+                }catch (NumberFormatException E){
+                    textPane.setVisible(false);
+                    errorMessage.setVisible(true);
+                    errorMessage.setText("Put in a number");
+                }
+            }
+        });
+        
+        confirmChange.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    String selectedWebsite = weakpasswordsBox.getItemAt(weakpasswordsBox.getSelectedIndex());
                     String passwordCheck = JOptionPane.showInputDialog("Type in your password to change this password:");
                     if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
                         String key = DatabaseUtil.getCipherKey(UserDB, user);
                         Cipher encryption = AesUtil.encryptCipher(key);
                         String cipherPW = AesUtil.encrypt(encryption, password);
                         String IV = AesUtil.getIV(encryption);
-
+            
                         DatabaseUtil.ChangePasswordCheck(PasswordDB, user, selectedWebsite, cipherPW, IV); // insert to database
-
+            
                         System.out.println("Password is " + password); // password that should be added to database
-
+            
                         weakpasswordsBox.setVisible(false);
                         queryWeakPassword.setVisible(false);
                         changePasswordButton.setVisible(false);
                         pwLengthField.setVisible(false);
                         pwlengthLabel.setVisible(false);
+                        select.setVisible(false);
+                        confirmChange.setVisible(false);
                         pwLengthField.setText("");
                         errorMessage.setText("");
                         textPane.setVisible(false);
                     }else{
                         JOptionPane.showMessageDialog(dialog, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                }catch (NumberFormatException | NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex ){
-                    textPane.setVisible(false);
-                    errorMessage.setText("Put in a number");
+                }catch (NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex){
+                    throw new Error("Wrong");
                 }
             }
         });
@@ -555,6 +588,16 @@ public class PasswordManager extends Page{
         back.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
+                errorMessage.setText("");
+                weakpasswordsBox.setVisible(false);
+                queryWeakPassword.setVisible(false);
+                changePasswordButton.setVisible(false);
+                pwLengthField.setVisible(false);
+                pwlengthLabel.setVisible(false);
+                select.setVisible(false);
+                confirmChange.setVisible(false);
+                textPane.setVisible(false);
+                pwLengthField.setText("");
                 errorMessage.setText("");
             }
         });
