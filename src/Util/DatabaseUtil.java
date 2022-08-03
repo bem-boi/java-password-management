@@ -197,23 +197,13 @@ public final class DatabaseUtil {
         }
     }
 
-    // example: 
-    // public static void main(String[] args) throws SQLException{
-    //     String url = "jdbc:mysql://127.0.0.1/key_vault";
-    //     try (Connection con = connectDB(url)){
+    public static void ChangePasswordCheck(Connection con, String user, String webname, String newcipherPW, String newIV){
+        String sql = "UPDATE password SET cipherPW='"+newcipherPW+"', IV='"+newIV+"' WHERE webname='"+webname+"' AND user='"+user+"'";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.executeUpdate();
+        }catch (SQLException e){
+            throw new Error("Problem", e);
+        }
+    }
 
-    //         System.out.println("Got it!");
-
-    //         //check if its the first time, so check if theres any username in the table
-    //         if (firstTime(con)){
-    //             System.out.println("REGISTER"); // send to register page
-    //         }
-    //         String sql = "SELECT id, username FROM users WHERE username = ?"; //"?" is placeholder, WHERE is under what condition
-    //         PreparedStatement ps = con.prepareStatement(sql); //convert sql to be something read to execute
-    //         ps.setString(1, "lol");
-
-    //     } catch (SQLException e) {
-    //         throw new Error("Problem", e);
-    //     } 
-    // }
 }

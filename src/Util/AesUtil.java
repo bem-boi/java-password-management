@@ -64,11 +64,4 @@ public final class AesUtil{
         return new String(decryption.doFinal(CipherTextByte));
     }
     
-    // og should be 'Q6R#:}N@?"uijVOF"$.rLfS'
-    // public static void main(String[] args) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException {
-    //     String og = decrypt("SS0S1c4ehIuVqc5B1VSi5ZNXpv+AMM0rz0cpYDx/s98=", "tTyyng60rEc+j1oe", "+haekr6m82obNJWw+tYH3EOuSEXkNuOQXpiklzw=");
-    //     System.out.println(og);
-    // }
-
-
 }

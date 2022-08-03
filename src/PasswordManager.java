@@ -12,7 +12,6 @@ import java.security.*;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class PasswordManager extends Page{
     
@@ -313,8 +312,11 @@ public class PasswordManager extends Page{
                 String selectedWebsite = websiteNamesBoxEdit.getItemAt(websiteNamesBoxEdit.getSelectedIndex());
                 passwordRetype = pwRetypeField.getText();
                 password = pwField.getText();
-                if (password.equals(passwordRetype) && PasswordGenUtils.isValidPassword(password)){
-                    errorMessage.setText("");
+                if (password.equals(passwordRetype)){
+                    if(!PasswordGenUtils.isValidPassword(password)){
+                        errorMessage.setText("Password is weak");
+                        errorMessage.setForeground(Color.RED);
+                    }
                     try{
                         String key = DatabaseUtil.getCipherKey(UserDB, user);
                         Cipher newencryption = AesUtil.encryptCipher(key);
@@ -394,14 +396,43 @@ public class PasswordManager extends Page{
 
     /* -------------------------------------------CHECK PANE---------------------------------------------- */
     protected JComponent checkPane(){
+        JFrame dialog = new JFrame();
+        JTextPane textPane = new JTextPane();
+        textPane.setVisible(false);
+
         JPanel panel = new JPanel();
         panel.setLayout(null);
 
+        JTextField pwLengthField = new JTextField(100);
+        pwLengthField.setBounds(190,150,165,25);
+        pwLengthField.setVisible(false);
+        panel.add(pwLengthField);
+
+        JLabel pwlengthLabel = new JLabel("Password Length");
+        pwlengthLabel.setBounds(70,150,165,25);
+        pwlengthLabel.setVisible(false);
+        panel.add(pwlengthLabel);
+        
+        JButton queryWeakPassword = new JButton("Query Password");
+        queryWeakPassword.setBounds(200,300,150,50);
+        queryWeakPassword.setVisible(false);
+        panel.add(queryWeakPassword);
+        
+        JButton changePasswordButton = new JButton("Change Password");
+        changePasswordButton.setBounds(500,300,150,50);
+        changePasswordButton.setVisible(false);
+        panel.add(changePasswordButton);
+
         JLabel errorMessage = new JLabel("");
-        errorMessage.setBounds(100,200,300,25);
+        errorMessage.setBounds(100,500,300,25);
         errorMessage.setForeground(Color.RED);
         panel.add(errorMessage);
 
+        JComboBox<String> weakpasswordsBox = new JComboBox<>();
+        weakpasswordsBox.setBounds(250, 200, 140, 20);
+        weakpasswordsBox.setVisible(false);
+        panel.add(weakpasswordsBox);
+        
         JButton checkButton = new JButton("Check Passwords");
         checkButton.setBounds(300,50,150,50);
         checkButton.addActionListener(new ActionListener(){
@@ -417,25 +448,114 @@ public class PasswordManager extends Page{
                                 WEAKpassword_dict.put(key, password_dict.get(key));
                             }
                         }
-                        for(String key: WEAKpassword_dict.keySet()){
-                            System.out.println(key + " is not secure");
-                            System.out.println("password is " + WEAKpassword_dict.get(key));
+                        // check if there are any weak passwords
+                        if (!WEAKpassword_dict.isEmpty()){
+                            for(String key: WEAKpassword_dict.keySet()){
+                                weakpasswordsBox.addItem(key);
+                                System.out.println(key + " is not secure");
+                            }
+                            weakpasswordsBox.setVisible(true);
+                            queryWeakPassword.setVisible(true);
+                            changePasswordButton.setVisible(true);
+                            pwLengthField.setVisible(true);
+                            pwlengthLabel.setVisible(true);
+                        }else{
+                            weakpasswordsBox.setVisible(false);
+                            queryWeakPassword.setVisible(false);
+                            changePasswordButton.setVisible(false);
+                            pwLengthField.setVisible(false);
+                            pwlengthLabel.setVisible(false);
+                            System.out.println("No insecure password");
                         }
                     }else{
-                        errorMessage.setText("You have no password in database.");
+                        System.out.println("No password yet");
                     }
                 } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException
                         | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e1) {
                     e1.printStackTrace();
-                }                
+                }
             }
         });
         panel.add(checkButton);
 
+        // lets the user see their weak password lol
+        queryWeakPassword.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedWebsite = weakpasswordsBox.getItemAt(weakpasswordsBox.getSelectedIndex());
+                String[] EmailPwIV = DatabaseUtil.queryButton(PasswordDB, user, selectedWebsite);
+                String key = DatabaseUtil.getCipherKey(UserDB, user);
+                String ogpassword;
+                try {
+                    ogpassword = AesUtil.decrypt(key, EmailPwIV[2], EmailPwIV[1]);
+                    JOptionPane.showMessageDialog(dialog,"Password: " + ogpassword);
+                } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException
+                        | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        // lets the user change their password with the desired length with the password generator function
+        changePasswordButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String selectedWebsite = weakpasswordsBox.getItemAt(weakpasswordsBox.getSelectedIndex());
+                    boolean cond = true;
+                    while (cond){
+                        int password_length = Integer.parseInt(pwLengthField.getText());
+                        password = PasswordGenUtils.generatePassword(password_length);
+                        if (PasswordGenUtils.isValidPassword(password)){
+                            cond = false;
+                            break;
+                        }
+                    }
+
+                    textPane.setEditable(false);
+                    StyledDocument doc = textPane.getStyledDocument();
+                    try{
+                        doc.insertString(doc.getLength(), "New Password: " + password + "\n", null );
+                    }
+                    catch (Exception E){
+                        System.out.println(E);
+                    }
+                    textPane.setBounds(400,50,300,100);
+                    panel.add(textPane);
+
+                    String passwordCheck = JOptionPane.showInputDialog("Type in your password to change this password:");
+                    if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
+                        String key = DatabaseUtil.getCipherKey(UserDB, user);
+                        Cipher encryption = AesUtil.encryptCipher(key);
+                        String cipherPW = AesUtil.encrypt(encryption, password);
+                        String IV = AesUtil.getIV(encryption);
+
+                        DatabaseUtil.ChangePasswordCheck(PasswordDB, user, selectedWebsite, cipherPW, IV); // insert to database
+
+                        System.out.println("Password is " + password); // password that should be added to database
+
+                        weakpasswordsBox.setVisible(false);
+                        queryWeakPassword.setVisible(false);
+                        changePasswordButton.setVisible(false);
+                        pwLengthField.setVisible(false);
+                        pwlengthLabel.setVisible(false);
+                        pwLengthField.setText("");
+                        errorMessage.setText("");
+                        textPane.setVisible(false);
+                    }else{
+                        JOptionPane.showMessageDialog(dialog, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }catch (NumberFormatException | NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException  | IllegalBlockSizeException | BadPaddingException ex ){
+                    textPane.setVisible(false);
+                    errorMessage.setText("Put in a number");
+                }
+            }
+        });
+
         back.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                errorMessage.setText("");                
+                errorMessage.setText("");
             }
         });
 
