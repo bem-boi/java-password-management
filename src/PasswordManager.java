@@ -11,6 +11,8 @@ import javax.crypto.*;
 import java.security.*;
 import java.sql.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class PasswordManager extends Page{
     
@@ -18,6 +20,9 @@ public class PasswordManager extends Page{
     private String websiteName;
     private String email;
     private String passwordRetype;
+
+    private HashMap<String, String> password_dict = new HashMap<>();
+    private HashMap<String, String> WEAKpassword_dict = new HashMap<>();
     
     public PasswordManager(int w, int h, String user){
         super(w,h);
@@ -184,26 +189,29 @@ public class PasswordManager extends Page{
                     email = emailField.getText();
                     if(PasswordGenUtils.isValidEmail(email)){
                         password = pwField.getText();
-                        if (PasswordGenUtils.isValidPassword(password)){
-                            // textpane
-                            textPane.setEditable(false);
-                            StyledDocument doc = textPane.getStyledDocument();
-                            try{
-                                doc.insertString(doc.getLength(), "Website: " + websiteName + "\n", null);
-                                doc.insertString(doc.getLength(), "Email: " + email + "\n", null );
-                                doc.insertString(doc.getLength(), "Password: " + password + "\n", null );
-                            }
-                            catch (Exception E){
-                                System.out.println(E);
-                            }
-                            textPane.setBounds(400,50,300,100);
-                            panel.add(textPane);
-                            
-                            confirmAdd.setVisible(true);
+                        if (PasswordGenUtils.isValidPassword(password)){ // allows user to still input whatever password they want, it just helps notify them that their password is not secure
+                            textPane.setVisible(true);
+                            errorLabel.setText("");
                         }else{
-                            textPane.setVisible(false);
-                            errorLabel.setText("Invalid password");
+                            textPane.setVisible(true);
+                            errorLabel.setText("Weak password");
                         }
+
+                        // textpane
+                        textPane.setEditable(false);
+                        StyledDocument doc = textPane.getStyledDocument();
+                        try{
+                            doc.insertString(doc.getLength(), "Website: " + websiteName + "\n", null);
+                            doc.insertString(doc.getLength(), "Email: " + email + "\n", null );
+                            doc.insertString(doc.getLength(), "Password: " + password + "\n", null );
+                        }
+                        catch (Exception E){
+                            System.out.println(E);
+                        }
+                        textPane.setBounds(400,50,300,100);
+                        panel.add(textPane);
+                        
+                        confirmAdd.setVisible(true);
     
                     }else{
                         textPane.setVisible(false);
@@ -385,14 +393,52 @@ public class PasswordManager extends Page{
     }
 
     /* -------------------------------------------CHECK PANE---------------------------------------------- */
-    protected JComponent checkPane(){ // use isvalidpassword from pwgenutil  // also maybe add feature wherre they can use the password generation to change their password
+    protected JComponent checkPane(){
         JPanel panel = new JPanel();
-        JLabel tabs = new JLabel("Check");
-        tabs.setBounds(0,0,20,40);
-        JButton click = new JButton("Clik me");
-        click.setBounds(3,5,40,40);
-        panel.add(click);
-        panel.add(tabs);
+        panel.setLayout(null);
+
+        JLabel errorMessage = new JLabel("");
+        errorMessage.setBounds(100,200,300,25);
+        errorMessage.setForeground(Color.RED);
+        panel.add(errorMessage);
+
+        JButton checkButton = new JButton("Check Passwords");
+        checkButton.setBounds(300,50,150,50);
+        checkButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    password_dict = DatabaseUtil.checkPWPMap(PasswordDB, user);
+                    // check first if password database is empty or not
+                    if(!password_dict.isEmpty()){
+                        // https://www.programiz.com/java-programming/examples/iterate-over-hashmap
+                        for(String key: password_dict.keySet()) {
+                            if (!PasswordGenUtils.isValidPassword(password_dict.get(key))){
+                                WEAKpassword_dict.put(key, password_dict.get(key));
+                            }
+                        }
+                        for(String key: WEAKpassword_dict.keySet()){
+                            System.out.println(key + " is not secure");
+                            System.out.println("password is " + WEAKpassword_dict.get(key));
+                        }
+                    }else{
+                        errorMessage.setText("You have no password in database.");
+                    }
+                } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException
+                        | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException e1) {
+                    e1.printStackTrace();
+                }                
+            }
+        });
+        panel.add(checkButton);
+
+        back.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                errorMessage.setText("");                
+            }
+        });
+
         return panel;
     }
 }

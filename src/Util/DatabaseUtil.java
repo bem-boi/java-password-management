@@ -178,11 +178,10 @@ public final class DatabaseUtil {
     /* -------------------------------------------CHECK PASSWORD---------------------------------------------- */
 
     // decrypts the password first and returns a hash table with array inside     
-    public static HashMap<Integer, String[]> checkPWPMap(Connection con, String user) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
-        HashMap<Integer, String[]> password_dict = new HashMap<Integer, String[]>();
+    public static HashMap<String, String> checkPWPMap(Connection con, String user) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
+        HashMap<String, String> password_dict = new HashMap<String, String>();
         String key = getCipherKey(con, user);
         String sql = "SELECT * FROM password WHERE user='"+user+"'";
-        int count = 1;
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ResultSet s = ps.executeQuery();
             while(s.next()){
@@ -190,10 +189,7 @@ public final class DatabaseUtil {
                 String tempIV = s.getString("IV");
                 String tempWebName = s.getString("webname");
                 String tempPW = AesUtil.decrypt(key, tempIV, tempCipherPW);  
-
-                String[] data = {tempWebName,tempPW};
-                password_dict.put(count,data);
-                count++;
+                password_dict.put(tempWebName,tempPW);
             }
             return password_dict;
         }catch (SQLException e){
