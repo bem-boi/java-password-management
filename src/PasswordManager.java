@@ -3,6 +3,8 @@ import Util.DatabaseUtil;
 import Util.PasswordGenUtils;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.StyledDocument;
 import java.awt.Color;
 import java.awt.event.*;
@@ -10,6 +12,7 @@ import java.awt.event.*;
 import javax.crypto.*;
 import java.security.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -19,9 +22,6 @@ public class PasswordManager extends Page{
     private String websiteName;
     private String email;
     private String passwordRetype;
-
-    private HashMap<String, String> password_dict = new HashMap<>();
-    private HashMap<String, String> WEAKpassword_dict = new HashMap<>();
     
     public PasswordManager(int w, int h, String user){
         super(w,h);
@@ -60,22 +60,37 @@ public class PasswordManager extends Page{
         JComponent panel2 = addPane();
         tabbedPane.setBounds(0,1,785,535);
         tabbedPane.addTab("Add", panel2);
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_2);
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         JComponent panel3 = editPane();
         tabbedPane.setBounds(0,1,785,535);
         tabbedPane.addTab("Edit", panel3);
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_3);
+        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
         JComponent panel4 = deletePane();
         tabbedPane.setBounds(0,1,785,535);
         tabbedPane.addTab("Delete", panel4);
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_4);
+        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
         JComponent panel5 = checkPane();
         tabbedPane.setBounds(0,1,785,535);
         tabbedPane.addTab("Check", panel5);
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_5);
+        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
+
+        tabbedPane.addChangeListener(new ChangeListener(){
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if(tabbedPane.getSelectedIndex() != 1){
+                    String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user);
+                    DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(websiteNames);
+                    ((JComboBox<String>) panel1.getComponent(0)).setModel(model);
+                    ((JComboBox<String>) panel3.getComponent(0)).setModel(model);
+                    ((JComboBox<String>) panel4.getComponent(0)).setModel(model);
+                }
+            }
+
+        });
 
         panel.add(tabbedPane);
         panel.revalidate();
@@ -91,10 +106,6 @@ public class PasswordManager extends Page{
         JPanel panel = new JPanel();
         panel.setLayout(null);
         
-        JLabel choose = new JLabel("Choose a Website: ");
-        choose.setBounds(100,50,120,20);
-        panel.add(choose);
-        
         String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
         JComboBox<String> websiteNamesBoxQuery = new JComboBox<>(websiteNames);
         
@@ -102,6 +113,10 @@ public class PasswordManager extends Page{
         
         websiteNamesBoxQuery.setBounds(250, 50, 140, 20);
         panel.add(websiteNamesBoxQuery);
+        
+        JLabel choose = new JLabel("Choose a Website: ");
+        choose.setBounds(100,50,120,20);
+        panel.add(choose); 
         
         JButton confirmQuery = new JButton("Confirm");
         confirmQuery.setBounds(470,50,100,50);
@@ -123,6 +138,7 @@ public class PasswordManager extends Page{
         });
         panel.add(confirmQuery);
         return panel;
+
     }
 
     /* -------------------------------------------ADD PANE---------------------------------------------- */
@@ -274,6 +290,12 @@ public class PasswordManager extends Page{
         JPanel panel = new JPanel();
         panel.setLayout(null);
         
+        String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
+        JComboBox<String> websiteNamesBoxEdit = new JComboBox<>(websiteNames);
+        
+        websiteNamesBoxEdit.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBoxEdit);
+
         JLabel choose = new JLabel("Choose a Website: ");
         choose.setBounds(100,50,120,20);
         panel.add(choose);
@@ -298,11 +320,6 @@ public class PasswordManager extends Page{
         errorMessage.setBounds(100,200,165,25);
         panel.add(errorMessage);
 
-        String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
-        JComboBox<String> websiteNamesBoxEdit = new JComboBox<>(websiteNames);
-        
-        websiteNamesBoxEdit.setBounds(250, 50, 140, 20);
-        panel.add(websiteNamesBoxEdit);
         
         JButton confirmEdit = new JButton("Modify");
         confirmEdit.setBounds(550,75,100,50);
@@ -357,9 +374,15 @@ public class PasswordManager extends Page{
     /* -------------------------------------------DELETE PANE---------------------------------------------- */
     protected JComponent deletePane(){
         JFrame errorDialog = new JFrame();
-        
+
         JPanel panel = new JPanel();
         panel.setLayout(null);
+        
+        String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
+        JComboBox<String> websiteNamesBoxDelete = new JComboBox<>(websiteNames);
+        
+        websiteNamesBoxDelete.setBounds(250, 50, 140, 20);
+        panel.add(websiteNamesBoxDelete);
         
         JLabel choose = new JLabel("Choose a Website: ");
         choose.setBounds(100,50,120,20);
@@ -368,12 +391,6 @@ public class PasswordManager extends Page{
         JLabel errorMessage = new JLabel("");
         errorMessage.setBounds(100,200,165,25);
         panel.add(errorMessage);
-
-        String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user); //this gets updated everytime database is updated
-        JComboBox<String> websiteNamesBoxDelete = new JComboBox<>(websiteNames);
-        
-        websiteNamesBoxDelete.setBounds(250, 50, 140, 20);
-        panel.add(websiteNamesBoxDelete);
         
         JButton confirmDelete = new JButton("Remove");
         confirmDelete.setBounds(470,50,100,50);
@@ -430,12 +447,12 @@ public class PasswordManager extends Page{
         errorMessage.setForeground(Color.RED);
         errorMessage.setVisible(false);
         panel.add(errorMessage);
-
+        
         JButton confirmChange = new JButton("Confirm");
         confirmChange.setBounds(300,400,150,50);
         confirmChange.setVisible(false);
         panel.add(confirmChange);
-
+        
         JComboBox<String> weakpasswordsBox = new JComboBox<>();
         weakpasswordsBox.setBounds(190, 150, 140, 20);
         weakpasswordsBox.setVisible(false);
@@ -452,9 +469,14 @@ public class PasswordManager extends Page{
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    HashMap<String, String> password_dict = new HashMap<>();
+                    HashMap<String, String> WEAKpassword_dict = new HashMap<>();
+                    
                     password_dict = DatabaseUtil.checkPWPMap(PasswordDB, user);
                     // check first if password database is empty or not
+                    System.out.println(Arrays.asList(password_dict));
                     if(!password_dict.isEmpty()){
+                        ArrayList<String> weak_password_list = new ArrayList<String>();
                         // https://www.programiz.com/java-programming/examples/iterate-over-hashmap
                         for(String key: password_dict.keySet()) {
                             if (!PasswordGenUtils.isValidPassword(password_dict.get(key))){
@@ -464,9 +486,14 @@ public class PasswordManager extends Page{
                         // check if there are any weak passwords
                         if (!WEAKpassword_dict.isEmpty()){
                             for(String key: WEAKpassword_dict.keySet()){
-                                weakpasswordsBox.addItem(key);
+                                weak_password_list.add(key);
                                 System.out.println(key + " is not secure");
                             }
+                            String[] websiteArray = new String[weak_password_list.size()];
+                            websiteArray = weak_password_list.toArray(websiteArray);
+                            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(websiteArray);
+                            weakpasswordsBox.setModel(model);
+                            
                             weakpasswordsBox.setVisible(true);
                             queryWeakPassword.setVisible(true);
                             changePasswordButton.setVisible(true);
