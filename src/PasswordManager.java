@@ -402,6 +402,9 @@ public class PasswordManager extends Page{
                 String passwordCheck = JOptionPane.showInputDialog("Type in your password to delete this record:");
                 if (DatabaseUtil.checkPassword(UserDB, passwordCheck, user)){
                     DatabaseUtil.deleteButton(PasswordDB, user, selectedWebsite);
+                    String[] websiteNames = DatabaseUtil.getWebName(PasswordDB, user);
+                    DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(websiteNames);
+                    websiteNamesBoxDelete.setModel(model);
                 }else{
                     JOptionPane.showMessageDialog(errorDialog, "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
                 }
