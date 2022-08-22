@@ -62,7 +62,7 @@ public class Login extends Template{
                     if (DatabaseUtil.checkUsername(UserDB,user)){
                         char[] passwordchar = pwText.getPassword();
                         String password = new String(passwordchar);
-                        String hashPW = DatabaseUtil.checkUsernamePasswordLogin(UserDB, user);
+                        String hashPW = DatabaseUtil.getHashPW(UserDB, user);
                         if(HashUtil.checkHash(password, hashPW)){
                             MainPage MainPage = new MainPage(800,600, user);
                             MainPage.show();
