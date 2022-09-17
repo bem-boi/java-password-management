@@ -108,7 +108,7 @@ public final class DatabaseUtil {
             s.next();
             return s.getString(1);
         }catch (SQLException e){
-            throw new Error("Problem", e);
+            throw new Error("Problem, can't get key", e);
         }
     }
 
@@ -167,9 +167,9 @@ public final class DatabaseUtil {
     /* -------------------------------------------CHECK PASSWORD---------------------------------------------- */
 
     // decrypts the password first and returns a hash table with array inside     
-    public static HashMap<String, String> checkPWPMap(Connection con, String user) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
+    public static HashMap<String, String> checkPWPMap(Connection con, String user, String cipherKey) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
         HashMap<String, String> password_dict = new HashMap<String, String>();
-        String key = getCipherKey(con, user);
+        String key = cipherKey;
         String sql = "SELECT * FROM password WHERE user='"+user+"'";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ResultSet s = ps.executeQuery();

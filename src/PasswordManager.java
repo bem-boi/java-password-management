@@ -475,7 +475,8 @@ public class PasswordManager extends Page{
                     HashMap<String, String> password_dict = new HashMap<>();
                     HashMap<String, String> WEAKpassword_dict = new HashMap<>();
                     
-                    password_dict = DatabaseUtil.checkPWPMap(PasswordDB, user);
+                    String cipherKey = DatabaseUtil.getCipherKey(UserDB, user);
+                    password_dict = DatabaseUtil.checkPWPMap(PasswordDB, user, cipherKey);
                     // check first if password database is empty or not
                     System.out.println(Arrays.asList(password_dict));
                     if(!password_dict.isEmpty()){

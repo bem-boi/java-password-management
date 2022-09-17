@@ -37,7 +37,7 @@ public final class PasswordGenUtils {
         String PasswordConditions = "^(?=.*[0-9])"
                         + "(?=.*[a-z])(?=.*[A-Z])"
                         + "(?=.*[@#$%^&+-=(),/:;_~<>{}|])" // special characters password need to have
-                        + "(?=\\S+$).{12,25}$";
+                        + "(?=\\S+$).{12,50}$";
 
         Pattern patt = Pattern.compile(PasswordConditions);
         return patt.matcher(password).matches();
