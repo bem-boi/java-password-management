@@ -20,7 +20,7 @@ public class Register extends Template{
 
     public void show(){
         try{
-            UserDB = DatabaseUtil.connectDB(UserUrl);
+            UserDB = DatabaseUtil.connectDB(UserUrl,System.getenv("USER_KEYVAULT"),System.getenv("PASSWORD_KEYVAULT"));
 
             frame.setTitle("Register Page");
             frame.setJMenuBar(null);

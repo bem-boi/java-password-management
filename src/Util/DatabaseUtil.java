@@ -15,8 +15,8 @@ import java.util.HashMap;
 
 public final class DatabaseUtil {
     
-    public static Connection connectDB(String url) throws SQLException{
-        Connection con = DriverManager.getConnection(url,"Beam","12345");
+    public static Connection connectDB(String url, String username, String password) throws SQLException{
+        Connection con = DriverManager.getConnection(url,username,password);
         return con;
     }
 

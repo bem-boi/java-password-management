@@ -15,7 +15,7 @@ public class Login extends Template{
 
     public void show(){
         try {
-            UserDB = DatabaseUtil.connectDB(UserUrl);
+            UserDB = DatabaseUtil.connectDB(UserUrl,System.getenv("USER_KEYVAULT"),System.getenv("PASSWORD_KEYVAULT"));
 
             frame.setTitle("Login Page");
             frame.setJMenuBar(null);

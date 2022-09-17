@@ -31,8 +31,8 @@ public class PasswordGenerator extends Page{
 
     public void show() throws SQLException{
         // database connection
-        PasswordDB = DatabaseUtil.connectDB(PasswordUrl);
-        UserDB = DatabaseUtil.connectDB(UserUrl);
+        PasswordDB = DatabaseUtil.connectDB(PasswordUrl, System.getenv("USER_PWVAULT"), System.getenv("PASSWORD_PWVAULT"));
+        UserDB = DatabaseUtil.connectDB(UserUrl,System.getenv("USER_KEYVAULT"),System.getenv("PASSWORD_KEYVAULT"));
 
         frame.setTitle("Password Generator");
         panel.setLayout(null);

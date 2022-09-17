@@ -10,7 +10,7 @@ public abstract class Template {
     protected int height;
     protected static String user;
 
-    protected static String UserUrl = "jdbc:mysql://127.0.0.1/test";
+    protected static String UserUrl = "jdbc:mysql://127.0.0.1:13306/key_vault";
     protected static Connection UserDB;
     protected static String PasswordUrl = "jdbc:mysql://127.0.0.1/test";
     protected static Connection PasswordDB;
