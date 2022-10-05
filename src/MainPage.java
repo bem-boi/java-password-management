@@ -26,6 +26,12 @@ public class MainPage extends Page{
         pwManage.addActionListener(new PushInActionListener(this, new PasswordManager(800, 600, user), frame));
         panel.add(pwManage);
 
+        JButton importExport = new JButton("EXPORT IMPORT");
+        importExport.setBounds(500, 400, 200,100);
+        importExport.setFocusPainted(false);
+        importExport.addActionListener(new PushInActionListener(this, new ExportImport(800, 600, user), frame));
+        panel.add(importExport);
+
 
         panel.revalidate();
         panel.repaint();

@@ -10,6 +10,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import com.mysql.cj.xdevapi.Result;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -194,5 +196,13 @@ public final class DatabaseUtil {
             throw new Error("Problem", e);
         }
     }
+
+    /* -------------------------------------------EXPORT IMPORT---------------------------------------------- */
+    
+    public static String[] getRecords(Connection con, String user){  //change the data type to return list or something idk
+        String sql = "SELECT * FROM password WHERE user='"+user+"'";
+
+    }
+
 
 }
