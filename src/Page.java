@@ -61,5 +61,37 @@ public abstract class Page extends Template{
         frame.setJMenuBar(mb);
     }
 
+    public JMenuBar getMb() {
+        return mb;
+    }
+
+    public JMenu getEdit() {
+        return edit;
+    }
+
+    public JMenu getFile() {
+        return file;
+    }
+
+    public JMenu getHelp() {
+        return help;
+    }
+
+    public JMenuItem getExit() {
+        return exit;
+    }
+
+    public JMenuItem getAbout() {
+        return about;
+    }
+
+    public JMenuItem getSignOut() {
+        return signOut;
+    }
+
+    public JButton getBack() {
+        return back;
+    }
+    
     public abstract void show() throws SQLException;
 }
