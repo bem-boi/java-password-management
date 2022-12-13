@@ -4,7 +4,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.LinkedList;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -12,6 +11,22 @@ import javax.crypto.NoSuchPaddingException;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ArrayList;
+
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public final class DatabaseUtil {
     
@@ -195,4 +210,41 @@ public final class DatabaseUtil {
         }
     }
 
+    /* -------------------------------------------EXPORT PASSWORD---------------------------------------------- */
+    public static void exportPassword(Connection con, String user) throws IOException{
+        List<String[]> pwList = new ArrayList<String[]>();
+        CSVWriter writer = new CSVWriter(new FileWriter("D:\\Github stuff\\appdev-CS-IA\\src\\Password CSV file\\Password.csv"));
+        String sql = "SELECT * FROM password WHERE user='"+user+"'";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ResultSet s = ps.executeQuery();
+            while(s.next()){
+                String tempWebName = s.getString("webname");
+                String tempEmail = s.getString("email");
+                String tempCipherPW = s.getString("cipherPW");
+                String tempIV = s.getString("IV");
+                String tempHashPW = s.getString("hashPW");
+                String tempRecord[] = {user,tempWebName,tempEmail,tempCipherPW,tempIV,tempHashPW};
+                pwList.add(tempRecord);
+            }
+            writer.writeAll(pwList);
+            writer.flush();
+        }catch (SQLException e){
+            throw new Error("Problem", e);
+        }
+    }
+
+    /* -------------------------------------------IMPORT PASSWORD---------------------------------------------- */
+    public static void importPassword(Connection con, String user, String filename) throws IOException, FileNotFoundException{
+        String path = "D:\\Github stuff\\appdev-CS-IA\\src\\Password CSV file\\" + filename + ".csv";
+        String line = "";
+        try (BufferedReader br = new BufferedReader(new FileReader(path))){
+            while ((line = br.readLine()) != null) {
+                String[] tempRecord = line.split(",");
+                insertPasswordGen(con, tempRecord[0].substring(1,tempRecord[0].length()-1), tempRecord[1].substring(1,tempRecord[1].length()-1), tempRecord[2].substring(1,tempRecord[2].length()-1), tempRecord[3].substring(1,tempRecord[3].length()-1), tempRecord[4].substring(1,tempRecord[4].length()-1), tempRecord[5].substring(1,tempRecord[5].length()-1));
+            }
+        } catch (Error e) {
+            e.printStackTrace();
+        }
+
+    }
 }

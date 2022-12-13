@@ -10,8 +10,6 @@ import Util.DatabaseUtil;
 
 public class Application {
 
-    //card layout
-
     public static Stack<Page> backStack;
 
     public Application(){
