@@ -91,7 +91,7 @@ public class PasswordManager extends Page{
             }
 
         });
-        tabbedPane.revalidate();
+
         panel.add(tabbedPane);
         panel.revalidate();
         panel.repaint();

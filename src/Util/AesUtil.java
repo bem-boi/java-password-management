@@ -4,10 +4,6 @@ import java.util.Base64;
 import java.security.*;
 import javax.crypto.*;
 import javax.crypto.spec.*;
-
-// http://www.cse.yorku.ca/~franck/teaching/2006-07/1030/notes/chapter1.pdf
-// https://stackoverflow.com/questions/49658798/aes-gcm-encryption-with-jdk-1-8   GCM stuff
-
 public final class AesUtil{
 
     private AesUtil(){

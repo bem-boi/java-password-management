@@ -15,18 +15,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public final class DatabaseUtil {
     
@@ -48,7 +43,7 @@ public final class DatabaseUtil {
 
     /* -------------------------------------------LOGIN AND REGISTRATION---------------------------------------------- */
 
-    // if true means there's user in database, false if there is no user in database   https://stackoverflow.com/questions/17506762/how-to-handle-if-a-sql-query-finds-nothing-using-resultset-in-java
+    // if true means there's user in database, false if there is no user in database   
     public static boolean checkUsername(Connection con, String username){
         String sql = "SELECT * FROM users WHERE username='"+username+"'";
         try(PreparedStatement ps = con.prepareStatement(sql)){
@@ -58,8 +53,7 @@ public final class DatabaseUtil {
             throw new Error("Problem", e);
         }
     }
-
-    // https://www.tutorialsfield.com/registration-form-in-java-with-database-connectivity/     
+   
     public static void insertUsernamePasswordRegister(Connection con, String username, String hashPW, String cipherKey){ 
         String sql = "INSERT INTO users (username, hashPW, encryption_key) VALUES('"+username+"' , '"+hashPW+"' , '"+cipherKey+"')";
         try(PreparedStatement ps = con.prepareStatement(sql)){
@@ -95,7 +89,7 @@ public final class DatabaseUtil {
 
     /* -------------------------------------------QUERY WEBSITES---------------------------------------------- */
 
-    // returns all of the webname in array in alphabetical order (used with the drop down menu)      NOT CASE SENSITIVE FIND THE COLLATION AND FIND CS NOT CI     https://makandracards.com/makandra/19495-mysql-collate-searching-case-sensitive    https://serverfault.com/questions/137415/change-collation-of-a-mysql-table-to-utf8-general-cs 
+    // returns all of the webname in array in alphabetical order (used with the drop down menu)      NOT CASE SENSITIVE FIND THE COLLATION AND FIND CS NOT CI    
     public static String[] getWebName(Connection con, String user){
         LinkedList<String> webList = new LinkedList<String>();
         String sql = "SELECT webname FROM password WHERE user='"+user+"'";

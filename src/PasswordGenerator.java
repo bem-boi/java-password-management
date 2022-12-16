@@ -10,8 +10,6 @@ import java.awt.event.*;
 import javax.crypto.*;
 import java.security.*;
 import java.sql.*;
-// import javax.xml.crypto.Data;
-// import java.util.Arrays;
 
 public class PasswordGenerator extends Page{
     

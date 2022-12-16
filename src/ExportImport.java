@@ -64,7 +64,7 @@ public class ExportImport extends Page{
 
         
         JButton confirmExport = new JButton("Export");
-        confirmExport.setBounds(470,50,100,50);
+        confirmExport.setBounds(295,50,100,50);
         confirmExport.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
