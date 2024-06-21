@@ -1,7 +1,1 @@
-IB COMPUTER SCIENCE IA BEAM
-
-Setup env:
-.\setenv.ps1
-
-Port forwarding:
-ssh -f -N -L 13306:keyvault.cmoyco3zpk9t.ap-southeast-1.rds.amazonaws.com:3306 ubuntu@13.229.155.210 -v
+This is my Java password management application. This application utilizes both a cloud database and a local database to keep track of users' data online and passwords locally. 
